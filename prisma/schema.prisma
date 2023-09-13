@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs https//pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  user
+  admin
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+  email    String    @unique
+  password String
+  avatar   String?
+  role     Role?     @default(user)
+  fangYans FangYan[]
+}
+
+model FangYan {
+  id      Int     @id @default(autoincrement())
+  mingZi  String  @unique
+  jieShao String?
+  x       String?
+  y       String?
+  pianQv  Int?
+  jiBie   String?
+  owners  User[]
+  zis     Zi[]
+}
+
+model Zi {
+  id          Int     @id @default(autoincrement())
+  zi          String
+  ziTu        String?
+  xinHuaShiYi String?
+
+  fangYan   FangYan @relation(fields: [fangYanId], references: [id])
+  fangYanId Int
+
+  duYins DuYin[]
+}
+
+model DuYin {
+  id      Int    @id @default(autoincrement())
+  yinBiao String
+  shengMu String?
+  yunMu   String?
+  diaoZhi String?
+
+  zi   Zi  @relation(fields: [ziId], references: [id])
+  ziId Int
+
+  yongFas YongFa[]
+}
+
+model YongFa {
+  id    Int     @id @default(autoincrement())
+  shiYi String @db.LongText 
+  zuCi  String?
+  zaoJv String?
+
+  duYin   DuYin @relation(fields: [duYinId], references: [id])
+  duYinId Int
+}
