@@ -1,12 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { UserService } from "./user.service";
-import { Public } from "src/utils/decorators";
+import { UserService } from './user.service';
+import { Public } from 'src/utils/decorators';
 
 @Controller('user')
 export class UserController {
-  constructor(
-    private userService: UserService
-  ){}
+  constructor(private userService: UserService) {}
 
   @Public()
   @Post('login')
@@ -14,5 +12,4 @@ export class UserController {
     // console.log('🔥', body)
     return this.userService.signIn(body.email, body.password);
   }
-
 }

@@ -1,5 +1,5 @@
 // This is your Prisma schema file,
-// learn more about it in the docs https//pris.ly/d/prisma-schema
+// learn more about it in the docs https//pris.ly/d/prisma-schema 
 
 generator client {
   provider = "prisma-client-js"
@@ -10,64 +10,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
+enum Level {
   user
   admin
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  name     String    @unique
-  email    String    @unique
-  password String
-  avatar   String?
-  role     Role?     @default(user)
-  fangYans FangYan[]
+  id              Int           @id @default(autoincrement())
+  email           String        @unique
+  name            String        @unique
+  password        String
+  avatar          String?       @default("default_avatar.png")
+  level           Level         @default(user)
+  managedDialects UserDialect[]
 }
 
-model FangYan {
-  id      Int     @id @default(autoincrement())
-  mingZi  String  @unique
-  jieShao String?
-  x       String?
-  y       String?
-  pianQv  Int?
-  jiBie   String?
-  owners  User[]
-  zis     Zi[]
+enum Role {
+  owner
+  editor
+  viewer
 }
 
-model Zi {
-  id          Int     @id @default(autoincrement())
-  zi          String
-  ziTu        String?
-  xinHuaShiYi String?
+model UserDialect {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  dialectId Int
+  role      Role // 角色可以是 "owner", "editor", "viewer" 等
+  user      User    @relation(fields: [userId], references: [id])
+  dialect   Dialect @relation(fields: [dialectId], references: [id])
 
-  fangYan   FangYan @relation(fields: [fangYanId], references: [id])
-  fangYanId Int
-
-  duYins DuYin[]
+  @@unique([userId, dialectId])
 }
 
-model DuYin {
-  id      Int    @id @default(autoincrement())
-  yinBiao String
-  shengMu String?
-  yunMu   String?
-  diaoZhi String?
-
-  zi   Zi  @relation(fields: [ziId], references: [id])
-  ziId Int
-
-  yongFas YongFa[]
+model Dialect {
+  id             Int             @id @default(autoincrement())
+  name           String          @unique
+  introduction   String?
+  longitude      String?
+  latitude       String?
+  pronunciations Pronunciation[]
+  managers       UserDialect[]
 }
 
-model YongFa {
-  id    Int     @id @default(autoincrement())
-  shiYi String @db.LongText 
-  zuCi  String?
-  zaoJv String?
+model Character {
+  codePoint      Int             @id @unique
+  chineseChar    String
+  picture        String?
+  pronunciations Pronunciation[]
+}
 
-  duYin   DuYin @relation(fields: [duYinId], references: [id])
-  duYinId Int
+model Pronunciation {
+  id                 Int           @id @default(autoincrement())
+  phonetic           String // 音标
+  initials           String? // 声母
+  finals             String? // 韵母
+  tone               String? // 声调
+  dialectId          Int
+  characterCodePoint Int // Character 的 codePoint 作为外键
+  dialect            Dialect       @relation(fields: [dialectId], references: [id], onDelete: Cascade)
+  character          Character     @relation(fields: [characterCodePoint], references: [codePoint])
+  explanations       Explanation[]
+}
+
+model Explanation {
+  id                   Int           @id @default(autoincrement())
+  description          String
+  wordFormation        String?
+  sentenceConstruction String?
+  pronunciationId      Int
+  pronunciation        Pronunciation @relation(fields: [pronunciationId], references: [id], onDelete: Cascade)
 }

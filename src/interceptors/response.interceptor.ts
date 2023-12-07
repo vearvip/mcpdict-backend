@@ -1,6 +1,11 @@
 // response.interceptor.ts
 
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common';
+import {
+  Injectable,
+  NestInterceptor,
+  ExecutionContext,
+  CallHandler,
+} from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -8,10 +13,13 @@ import { map } from 'rxjs/operators';
 export class ResponseInterceptor<T> implements NestInterceptor<T, any> {
   intercept(context: ExecutionContext, next: CallHandler<T>): Observable<any> {
     return next.handle().pipe(
-      map(data => ({
-        data: data,
-        success: true,
-      })),
+      map((data) => {
+        // console.log('data', data);
+        return {
+          data: data,
+          success: true,
+        };
+      }),
     );
   }
 }

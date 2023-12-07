@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
     ])
     if (isPublic) {
       // 💡 isPublic为true代表是@Public装饰的公开接口，无需登录，直接访问
-      console.log('👒')
+      // console.log('👒')
       return true;
     }
 
