@@ -12,6 +12,7 @@ import { jwtConstants } from "./utils/constants";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { AuthGuard } from "./guards/auth.guard";
 import { ResponseInterceptor } from "src/interceptors/response.interceptor";
+import {AppController} from './app.controller'
 
 @Module({
   imports: [
@@ -28,7 +29,9 @@ import { ResponseInterceptor } from "src/interceptors/response.interceptor";
     DuYinModule,
     YongFaModule, 
   ],
-  controllers: [],
+  controllers: [
+    AppController
+  ],
   providers: [
     // https://docs.nestjs.com/security/authentication#enable-authentication-globally
     // NestJS自动绑定AuthGuard到所有接口，不需要验证的接口启动@public装饰器
