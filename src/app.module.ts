@@ -14,6 +14,7 @@ import { ResponseInterceptor } from 'src/interceptors/response.interceptor';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AllExceptionsFilter } from "./filters/http-exception.filter";
+import { CharacterModule } from './modules/character/character.module';
 
 @Module({
   imports: [ 
@@ -23,6 +24,7 @@ import { AllExceptionsFilter } from "./filters/http-exception.filter";
       signOptions: { expiresIn: '60s' },
     }),
     ProviderModule,
+    CharacterModule,
     // CeshiModule,
     // ZiModule,
     // FangYanModule,
