@@ -1,5 +1,5 @@
 {
-  "name": "dialect-dict-backend",
+  "name": "elysia-ceshi",
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@elysiajs/swagger": "^1.1.6",
-    "@vearvip/hanzi-utils": "^1.0.6",
+    "@vearvip/hanzi-utils": "1.0.8",
     "elysia": "latest"
   },
   "devDependencies": {
