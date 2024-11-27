@@ -1,13 +1,11 @@
 import { Elysia } from "elysia";
 import { swagger } from "@elysiajs/swagger";
 import { dialectRoutes } from "./routes/dialect";
-import { charRoutes } from "./routes/char";
-import { userRoutes } from "./routes/user";
-
+import { charRoutes } from "./routes/char"; 
 const app = new Elysia();
 
 // 注册路由
-app.use(swagger()).use(dialectRoutes).use(charRoutes).use(userRoutes);
+app.use(swagger()).use(dialectRoutes).use(charRoutes) 
 
 // 处理未匹配到的路由
 app.all("*", () => {
