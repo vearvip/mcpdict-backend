@@ -10,3 +10,4 @@ export function queryChars(charList: string[]) {
   return rows
 }
 
+
