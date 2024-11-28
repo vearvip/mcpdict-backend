@@ -3,8 +3,10 @@ import { swagger } from "@elysiajs/swagger";
 import { dialectRoutes } from "./routes/dialect";
 import { charRoutes } from "./routes/char"; 
 import { crudRoutes } from "./routes/crud";
+import { cors } from '@elysiajs/cors'
 const app = new Elysia();
 
+app.use(cors())
 // 注册路由
 app.use(swagger()).use(dialectRoutes).use(charRoutes).use(crudRoutes)
 
