@@ -3,7 +3,8 @@
   "version": "1.0.50",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "bun run --watch src/index.ts"
+    "dev": "bun run --watch src/index.ts",
+    "deploy": "docker-compose up --build -d"
   },
   "dependencies": {
     "@elysiajs/swagger": "^1.1.6",
