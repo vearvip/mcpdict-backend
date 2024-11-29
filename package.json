@@ -1,0 +1,19 @@
+{
+  "name": "dialect-dict-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx ./src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "ultimate-express": "^1.3.16"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}
