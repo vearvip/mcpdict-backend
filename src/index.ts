@@ -1,4 +1,4 @@
-import express, { Express,  json, urlencoded } from 'ultimate-express';
+import express, { Express, json, urlencoded } from 'ultimate-express';
 import cors from 'cors';
 import charRouter from './routes/char';
 import dialectRouter from './routes/dialect';
@@ -34,10 +34,6 @@ app.listen(port, () => {
 // 确保在应用结束时关闭数据库连接
 process.on('exit', () => {
   if (db) {
-      db.close((err) => {
-          if (err) {
-              console.error('Error closing the database:', err.message);
-          }
-      });
+    db.close();
   }
 });
