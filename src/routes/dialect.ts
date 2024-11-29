@@ -10,8 +10,6 @@ const router = express.Router();
 router.get('/', async (req: express.Request, res: express.Response) => {
 
   const dialects = dialectService.queryDialects();
-  // const dialectGeojson = await loadGeoJSON(path.join(__dirname, '../database/方言.geojson'))
-  // const dialects = dialectGeojson.features.map(feature => feature.properties[LANGUAGE]) 
 
   res.send({
     success: true,
