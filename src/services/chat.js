@@ -1,21 +1,24 @@
-import { extractHanzi } from "@vearvip/hanzi-utils";
-import db from "../database/index.js";
-import { HZ, VA } from "../utils/constant.js";
+const { extractHanzi } = require("@vearvip/hanzi-utils");
+const db = require("../database/index");
+const { HZ, VA } = require("../utils/constant");
 
 // 查询多个字符的信息
-export function queryChars(charList) { 
-  const placeholders = charList.map(char => `'${char}'`).join(', ');
+function queryChars(charList) { 
+  const placeholders = charList.map(() => '?').join(', ');
   const sqlStr = `SELECT * FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
-  const rows = db.query(sqlStr).all();
+  const stmt = db.prepare(sqlStr);
+  const rows = stmt.all(charList);
   return rows;
 }
 
 // 查询多个字符的变体
-export function queryVariants(charStr) {
+function queryVariants(charStr = '') {
+  console.log({charStr})
   const charList = extractHanzi(charStr); // 提取字符串中的汉字
-  const placeholders = charList.map(char => `'${char}'`).join(', ');
+  const placeholders = charList.map(() => '?').join(', ');
   const sqlStr = `SELECT ${HZ}, ${VA} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
-  const rows = db.query(sqlStr).all();
+  const stmt = db.prepare(sqlStr);
+  const rows = stmt.all(charList);
 
   // 初始化变体数组
   const variants = [];
@@ -30,3 +33,8 @@ export function queryVariants(charStr) {
 
   return variants;
 }
+
+module.exports = {
+  queryChars,
+  queryVariants
+};

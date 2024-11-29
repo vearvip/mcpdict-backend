@@ -2,7 +2,6 @@
   "name": "dialect-dict-backend",
   "version": "1.0.0",
   "main": "src/index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./src/index.js"
