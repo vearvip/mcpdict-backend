@@ -7,7 +7,7 @@ const port: number = 3000;
 
 app.use(cors());
 
-app.use("/", charRouter);
+app.use("/char", charRouter);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
