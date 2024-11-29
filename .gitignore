@@ -131,3 +131,5 @@ dist
 package-lock.json
 
 MCPDict/
+
+mcpdict.db
