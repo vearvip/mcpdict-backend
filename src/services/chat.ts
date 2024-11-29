@@ -3,22 +3,22 @@ import db from "../database";
 import { HZ, VA } from "../utils/constant";
 
 // 查询多个字符的信息
-function queryChars(charList: string[]): any[] { 
+export function queryChars(charList: string[], dialectList?: string[]): any[] { 
   const placeholders = charList.map(() => '?').join(', ');
-  const sqlStr = `SELECT * FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
+  const sqlStr = `SELECT ${dialectList?.join(', ')} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
   const stmt = db.prepare(sqlStr);
   const rows = stmt.all(charList);
   return rows;
 }
 
 // 查询多个字符的变体
-function queryVariants(charStr: string = ''): string[] {
-  console.log({ charStr });
-  const charList = extractHanzi(charStr); // 提取字符串中的汉字
-  const placeholders = charList.map(() => '?').join(', ');
+export function queryVariants(charList: string[]): string[] {
+  console.log({ charList });
+  const hanziCharList = extractHanzi(charList.join('')); // 提取字符串中的汉字
+  const placeholders = hanziCharList.map(() => '?').join(', ');
   const sqlStr = `SELECT ${HZ}, ${VA} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
   const stmt = db.prepare(sqlStr);
-  const rows = stmt.all(charList);
+  const rows = stmt.all(hanziCharList);
 
   // 初始化变体数组
   const variants: string[] = [];
@@ -33,5 +33,4 @@ function queryVariants(charStr: string = ''): string[] {
 
   return variants;
 }
-
-export { queryChars, queryVariants };
+ 
