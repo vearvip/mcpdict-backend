@@ -1,11 +1,14 @@
 const express = require('ultimate-express')
-const app = express()
-const port = 3000
+const cors = require('cors')
+const charRouter = require('./routes/char.js')
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+const app = express();
+const port = 3000;
+
+app.use(cors())
+
+app.use("/", charRouter);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`[server]: Server is running at http://localhost:${port}`);
+});
