@@ -1,9 +1,11 @@
-const express = require('ultimate-express')
+import express from 'ultimate-express' 
+import chatService from '../services/chat.js'; 
 const router = express.Router();
 
 // GET 请求：文章列表
 router.get('/', (req, res) => {
+    chatService.q
     res.send('Hello World!2222')
 });
 
-module.exports = router
+export default router

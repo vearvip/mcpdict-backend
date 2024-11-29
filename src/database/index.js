@@ -1,5 +1,4 @@
-const db = require('better-sqlite3')('./mcpdict.db', {
-  
-});
+import Database from 'better-sqlite3';
+const db = new Database('mcpdict.db', options);
 
-module.exports = db
+export default db

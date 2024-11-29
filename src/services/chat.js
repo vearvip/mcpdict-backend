@@ -1,9 +1,9 @@
-const { extractHanzi } = require("@vearvip/hanzi-utils");
-const db = require("../database");
-const { HZ, VA } = require("../utils/constant");
+import { extractHanzi } from "@vearvip/hanzi-utils";
+import db from "../database/index.js";
+import { HZ, VA } from "../utils/constant.js";
 
 // 查询多个字符的信息
-function queryChars(charList) { 
+export function queryChars(charList) { 
   const placeholders = charList.map(char => `'${char}'`).join(', ');
   const sqlStr = `SELECT * FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
   const rows = db.query(sqlStr).all();
@@ -11,7 +11,7 @@ function queryChars(charList) {
 }
 
 // 查询多个字符的变体
-function queryVariants(charStr) {
+export function queryVariants(charStr) {
   const charList = extractHanzi(charStr); // 提取字符串中的汉字
   const placeholders = charList.map(char => `'${char}'`).join(', ');
   const sqlStr = `SELECT ${HZ}, ${VA} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
@@ -30,5 +30,3 @@ function queryVariants(charStr) {
 
   return variants;
 }
-
-module.exports = { queryChars, queryVariants };
