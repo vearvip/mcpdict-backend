@@ -54,5 +54,6 @@ export const EDITOR_COLUMNS = ["作者", "錄入人", "維護人"];
 
 export const BLACK_LIST = [
   HZ, BH, BS, SW, GYHZ, KX, HD, LF, ZX, WBH, VA, VS, FL,
- "五筆86版","五筆98版","五筆06版","倉頡三代","倉頡五代","倉頡六代" 
+ "五筆86版","五筆98版","五筆06版","倉頡三代","倉頡五代","倉頡六代"
 ]
+ 

@@ -1,6 +1,7 @@
 import express from 'ultimate-express';
 import { queryVariant } from "@vearvip/hanzi-utils";
 import * as chatService from '../services/char'; 
+import { BLACK_LIST, HZ } from '../utils/constant';
 
 const router = express.Router();
  
@@ -16,8 +17,8 @@ router.get('/', (req: express.Request, res: express.Response) => {
   } else if (req.query.dialect && typeof req?.query?.dialect !== 'string') {
     throw new Error('请传入正确的方言！')
   }
-  const charList: string[] =  (req?.query?.char ?? '').split(',')
-  const dialectList: string[] = (req?.query?.dialect ?? '').split(',')
+  const charList: string[] =  (req?.query?.char ?? '').split(',').filter(char => char)
+  const dialectList: string[] = (req?.query?.dialect ?? '').split(',').filter(dialect => dialect)
 
   if (
     !charList || !Array.isArray(charList)
@@ -38,10 +39,30 @@ router.get('/', (req: express.Request, res: express.Response) => {
     return acc;
   }, [] as string[])
   console.log('variants', variants)
+  console.log('dialectList', dialectList)
   const chars = chatService.queryChars(variants, dialectList);
+ 
+  const charInfos: any[] = []
+  chars.forEach(charInfo => {
+    const hanZiChar = charInfo[HZ];
+    delete charInfo[HZ];
+    for (const dialectName in charInfo) { 
+      const element = charInfo[dialectName];
+      if (!element) {
+        delete charInfo[dialectName];
+      }
+      BLACK_LIST.forEach(key => {
+        delete charInfo[key];
+      });
+    } 
+    charInfos.push({
+      char: hanZiChar,
+      charInfo: charInfo
+    }) 
+  })
 
   res.send({
-    data: chars,
+    data: charInfos,
     success: true
   })
 });
