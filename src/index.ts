@@ -9,7 +9,8 @@ import { notFoundMiddleware } from './middlewares/notFoundMiddleware';
 const app: Express = express();
 const port: number = 3000;
 
-app.use(cors());
+// 明确地允许所有源
+app.use(cors({ origin: "*" }));
 
 // 使用中间件解析 JSON 格式的请求体
 app.use(json());
