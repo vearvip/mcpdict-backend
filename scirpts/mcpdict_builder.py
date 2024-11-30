@@ -43,13 +43,13 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # 定义路径
-    repo_url = "https://github.com/osfans/MCPDict.git"
+    repo_url = "https://kkgithub.com/osfans/MCPDict.git"
     repo_dir = os.path.join(script_dir, "MCPDict/")
     tools_dir = os.path.join(repo_dir, "tools/")
     requirements_file = os.path.join(tools_dir, "requirements.txt")
     make_script = os.path.join(tools_dir, "make.py")
     db_source_path = os.path.join(repo_dir, "app/src/main/assets/databases/mcpdict.db")
-    db_target_dir = os.path.join(script_dir, "src/database/")
+    db_target_dir = os.path.join(script_dir, "../src/database/")
     db_target_path = os.path.join(db_target_dir, "mcpdict.db")
 
     # 记录总开始时间
@@ -70,7 +70,7 @@ def main():
         os.chdir(script_dir)
     else:
         print(f"{bcolors.FLUORESCENT_GREEN}正在克隆仓库...{bcolors.ENDC}")
-        clone_time = run_command_with_progress(f"git clone --progress {repo_url} {repo_dir}")
+        clone_time = run_command_with_progress(f"git clone --depth 1 --progress {repo_url} {repo_dir}")
 
     # 检查并选择合适的 pip 命令
     pip_command = check_pip_command()

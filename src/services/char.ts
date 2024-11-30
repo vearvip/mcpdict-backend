@@ -5,9 +5,15 @@ import { HZ, VA } from "../utils/constant";
 // 查询多个字符的信息
 export function queryChars(charList: string[], dialectList?: string[]): any[] { 
   const placeholders = charList.map(() => '?').join(', ');
-  const sqlStr = `SELECT ${dialectList?.join(', ')} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
+  const sqlStr = `SELECT ${(Array.isArray(dialectList) && dialectList.length > 0 ? [...dialectList, HZ]?.join(', ') : undefined) || '*'} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
   const stmt = db.prepare(sqlStr);
-  const rows = stmt.all(charList);
+  const rows = stmt.all(charList).reduce((ret, val) => {
+    const hanZiChar = val[HZ];
+    delete val[HZ];
+    return [...ret, {
+      [hanZiChar]: val,
+    }];
+}, []);
   return rows;
 }
 

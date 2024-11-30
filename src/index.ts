@@ -17,15 +17,15 @@ app.use(json());
 // 使用中间件解析 URL 编码格式的请求体（例如表单提交）
 app.use(urlencoded({ extended: true }));
 
-// 处理未匹配到的路由
-app.use(notFoundMiddleware);
-// 错误处理中间件
-app.use(errorMiddleware);
 
 
 app.use("/char", charRouter);
 app.use("/dialect", dialectRouter);
 
+// 处理未匹配到的路由
+app.use(notFoundMiddleware);
+// 错误处理中间件
+app.use(errorMiddleware);
 
 app.listen(port, () => {
   console.log(`[server]: Server is running at http://localhost:${port}`);
