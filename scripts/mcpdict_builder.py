@@ -75,9 +75,12 @@ def main():
     # 检查并选择合适的 pip 命令
     pip_command = check_pip_command()
 
+    # 添加清华大学的 PyPI 镜像源
+    pypi_mirror = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+
     # 安装依赖
     print(f"{bcolors.FLUORESCENT_GREEN}正在安装依赖...{bcolors.ENDC}")
-    install_time = run_command_with_progress(f"{pip_command} install -r {requirements_file}")
+    install_time = run_command_with_progress(f"{pip_command} install -r {requirements_file} -i {pypi_mirror}")
 
     # 检查必要的文件是否存在
     required_files = [
