@@ -7,12 +7,8 @@ import time
 class bcolors:
     HEADER = '\033[95m'  # 紫色
     OKBLUE = '\033[94m'  # 蓝色
-    OKGREEN = '\033[92m'  # 绿色
-    WARNING = '\033[93m'  # 黄色
-    FAIL = '\033[91m'  # 红色
-    ENDC = '\033[0m'  # 结束颜色
-    BOLD = '\033[1m'  # 加粗
-    UNDERLINE = '\033[4m'  # 下划线
+    OKGREEN = '\033[92m'  # 绿色  
+    ENDC = '\033[0m'  # 结束颜色  
     FLUORESCENT_GREEN = '\033[38;5;46m'  # 荧光绿色
 
 def run_command_with_progress(command, cwd=None):
