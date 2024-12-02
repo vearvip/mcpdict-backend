@@ -48,6 +48,10 @@ def main():
     db_target_dir = os.path.join(script_dir, "../src/database/")
     db_target_path = os.path.join(db_target_dir, "mcpdict.db")
 
+    # 新增：定义额外要复制的文件路径
+    geojson_source_path = os.path.join(repo_dir, "方言.geojson")
+    geojson_target_path = os.path.join(db_target_dir, "方言.geojson")
+
     # 记录总开始时间
     total_start_time = time.time()
 
@@ -100,6 +104,13 @@ def main():
     if not os.path.exists(db_target_dir):
         os.makedirs(db_target_dir)
     shutil.copy2(db_source_path, db_target_path)
+
+    # 检查并移动 方言.geojson 文件
+    if os.path.exists(geojson_source_path):
+        shutil.copy2(geojson_source_path, geojson_target_path)
+    else:
+        print(f"{bcolors.OKBLUE}警告: {geojson_source_path} 不存在，不会进行复制。{bcolors.ENDC}")
+
     move_time = time.time() - move_start_time
 
     # 记录总结束时间
@@ -111,7 +122,7 @@ def main():
     print(f"{bcolors.OKBLUE}拉取最新分支用了 {bcolors.HEADER}{pull_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
     print(f"{bcolors.OKBLUE}安装依赖用了 {bcolors.HEADER}{install_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
     print(f"{bcolors.OKBLUE}执行 make.py 用了 {bcolors.HEADER}{make_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}移动 .db 文件用了 {bcolors.HEADER}{move_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
+    print(f"{bcolors.OKBLUE}移动 .db 文件和 geojson 文件用了 {bcolors.HEADER}{move_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
     print(f"{bcolors.OKBLUE}总耗时 {bcolors.HEADER}{total_elapsed_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
 
     print(f"{bcolors.OKGREEN}过程完成成功。{bcolors.ENDC}")
