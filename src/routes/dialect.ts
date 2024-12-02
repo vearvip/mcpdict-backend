@@ -9,11 +9,11 @@ const router = express.Router();
 
 router.get('/', async (req: express.Request, res: express.Response) => {
 
-  const dialects = dialectService.queryDialects();
+  const dialectInfos = dialectService.queryDialectInfos();
 
   res.send({
     success: true,
-    data: dialects
+    data: dialectInfos
   }) 
 });
 router.get('/geo', async (req: express.Request, res: express.Response) => {
