@@ -1,8 +1,7 @@
 import express from 'ultimate-express';
 import { queryVariant } from "@vearvip/hanzi-utils";
 import * as chatService from '../services/char'; 
-import { BLACK_LIST, HZ } from '../utils/constant';
-
+import { BLACK_LIST, HZ } from '../utils/constant';  
 const router = express.Router();
  
 
@@ -38,8 +37,8 @@ router.get('/', (req: express.Request, res: express.Response) => {
     acc.push(char);
     return acc;
   }, [] as string[])
-  console.log('variants', variants)
-  console.log('dialectList', dialectList)
+  // console.log('variants', variants)
+  // console.log('dialectList', dialectList)
   const chars = chatService.queryChars(variants, dialectList);
  
   const charInfos: any[] = []
@@ -48,12 +47,12 @@ router.get('/', (req: express.Request, res: express.Response) => {
     delete charInfo[HZ];
     for (const dialectName in charInfo) { 
       const element = charInfo[dialectName];
-      if (!element) {
+      if (
+        !element
+        || !req.session.dialectNames.includes(dialectName)
+      ) {
         delete charInfo[dialectName];
-      }
-      BLACK_LIST.forEach(key => {
-        delete charInfo[key];
-      });
+      } 
     } 
     charInfos.push({
       char: hanZiChar,
@@ -66,5 +65,59 @@ router.get('/', (req: express.Request, res: express.Response) => {
     success: true
   })
 });
+
+router.post('/long', (req: express.Request, res: express.Response) => {
+  const longCharList: string[] = req?.body?.longCharList ?? [];
+  const dialectName: string = req?.body?.dialectName ?? undefined; 
+  // console.log(req?.body)
+  if (longCharList.length === 0) {
+    throw new Error('请传入长文！')
+  } else if (longCharList.length > 1000) {
+    throw new Error('单次长文注音，不能超过1000个汉字！')
+  }  else if (!dialectName) {
+    throw new Error('请选择方言以后再进行长文搜索！')
+  } 
+ 
+
+  // const variants = chatService.queryVariants(charList);
+  const variants = longCharList.reduce((acc, char) => {
+    const variant = queryVariant(char);
+    if (variant) {
+      acc.push(...variant);
+    }
+    acc.push(char);
+    return acc;
+  }, [] as string[])
+  // console.log('variants', variants)
+  // console.log('dialectName', dialectName)
+  const chars = chatService.queryChars(variants, [dialectName]);
+ 
+  const charInfos: any[] = []
+  chars.forEach(charInfo => {
+    const hanZiChar = charInfo[HZ];
+    delete charInfo[HZ];
+    for (const dialectName in charInfo) { 
+      const element = charInfo[dialectName];
+      if (
+        !element
+        || !req.session.dialectNames.includes(dialectName)
+      ) {
+        delete charInfo[dialectName];
+      } 
+    } 
+    charInfos.push({
+      char: hanZiChar,
+      charInfo: charInfo
+    }) 
+  })
+
+  res.send({
+    data: charInfos,
+    success: true
+  })
+});
+
+
+ 
 
 export default router;

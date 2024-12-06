@@ -2,18 +2,24 @@ import express from 'ultimate-express';
 import * as dialectService from '../services/dialect';
 import { loadGeoJSON, } from '../utils';
 import path from 'path';
-import { LANGUAGE } from '../utils/constant';
+import { JC, LANGUAGE, YDYS } from '../utils/constant';
 
 const router = express.Router();
 
 
 router.get('/', async (req: express.Request, res: express.Response) => {
-
-  const dialectInfos = dialectService.queryDialectInfos();
+  // let dialectInfos 
+  // if (req.session.dialectInfos) {
+  //   dialectInfos = req.session.dialectInfos
+  // } else {
+  //   dialectInfos = dialectService.queryDialectInfos().filter(ele => ele[YDYS]); 
+  //   req.session.dialectInfos = dialectInfos
+  //   req.session.dialectNames = dialectInfos.map(ele => ele[JC])
+  // } 
 
   res.send({
     success: true,
-    data: dialectInfos
+    data: req.session.dialectInfos
   }) 
 });
 router.get('/geo', async (req: express.Request, res: express.Response) => {

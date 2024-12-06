@@ -5,22 +5,15 @@ import { HZ, VA } from "../utils/constant";
 // 查询多个字符的信息
 export function queryChars(charList: string[], dialectList?: string[]): any[] {
   const placeholders = charList.map(() => '?').join(', ');
-  const sqlStr = `SELECT ${(Array.isArray(dialectList) && dialectList.length > 0 ? [...dialectList, HZ]?.join(', ') : undefined) || '*'} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
+  const sqlStr = `SELECT ${(Array.isArray(dialectList) && dialectList.length > 0 ? [...dialectList, HZ].map(ele => `\`${ele}\``)?.join(', ') : undefined) || '*'} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
   const stmt = db.prepare(sqlStr);
   const rows = stmt.all(charList)
-    // .reduce((ret, val) => {
-    //   const hanZiChar = val[HZ];
-    //   delete val[HZ];
-    //   return [...ret, {
-    //     [hanZiChar]: val,
-    //   }];
-    // }, []);
   return rows;
 }
 
 // 查询多个字符的变体
 export function queryVariants(charList: string[]): string[] {
-  console.log({ charList });
+  // console.log({ charList });
   const hanziCharList = extractHanzi(charList.join('')); // 提取字符串中的汉字
   const placeholders = hanziCharList.map(() => '?').join(', ');
   const sqlStr = `SELECT ${HZ}, ${VA} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;

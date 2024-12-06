@@ -57,3 +57,5 @@ export const BLACK_LIST = [
  "五筆86版","五筆98版","五筆06版","倉頡三代","倉頡五代","倉頡六代"
 ]
  
+export const YDYS = '音典顏色'
+export const JC = '簡稱'
