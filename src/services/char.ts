@@ -19,13 +19,12 @@ export function queryChars(charList: string[], dialectList?: string[]): any[] {
  
 
 // 查询多个字符的变体
-export function queryVariants(charList: string[]): string[] {
-  // console.log({ charList });
+export function queryVariants(charList: string[]): string[] { 
   const hanziCharList = extractHanzi(charList.join('')); // 提取字符串中的汉字
-  const placeholders = hanziCharList.map(() => '?').join(', ');
-  const sqlStr = `SELECT ${HZ}, ${VA} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
+  const placeholders = hanziCharList.join(' OR ');
+  const sqlStr = `SELECT ${HZ}, ${VA} FROM mcpdict WHERE ${HZ} MATCH '${placeholders}'`;
   const stmt = db.prepare(sqlStr);
-  const rows = stmt.all(hanziCharList);
+  const rows = stmt.all();
 
   // 初始化变体数组
   const variants: string[] = [];

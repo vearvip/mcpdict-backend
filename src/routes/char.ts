@@ -28,40 +28,53 @@ router.get('/', (req: express.Request, res: express.Response) => {
     throw new Error('单次查询，不能超过10个汉字！')
   } 
 
-  // const variants = chatService.queryVariants(charList);
-  const variants = charList.reduce((acc, char) => {
-    const variant = queryVariant(char);
-    if (variant) {
-      acc.push(...variant);
-    }
-    acc.push(char);
-    return acc;
-  }, [] as string[])
-  // console.log('variants', variants)
-  // console.log('dialectList', dialectList)
-  const chars = chatService.queryChars(variants, dialectList);
+  const variants = chatService.queryVariants(charList);
+ 
+  // console.log('variants', variants) 
+  const charRows = chatService.queryChars(variants, dialectList);
  
   const charInfos: any[] = []
-  chars.forEach(charInfo => {
-    const hanZiChar = charInfo[HZ];
-    delete charInfo[HZ];
-    for (const dialectName in charInfo) { 
-      const element = charInfo[dialectName];
-      if (
-        !element
-        || !req.app.locals.dialectNames.includes(dialectName)
-      ) {
-        delete charInfo[dialectName];
+
+  variants.forEach(char => {
+    const charInfo = charRows.find(charRow => charRow[HZ] === char)
+      delete charInfo[HZ];
+      for (const dialectName in charInfo) { 
+        const element = charInfo[dialectName];
+        if (
+          !element
+          || !req.app.locals.dialectNames.includes(dialectName)
+        ) {
+          delete charInfo[dialectName];
+        } 
       } 
-    } 
-    charInfos.push({
-      char: hanZiChar,
-      charInfo: charInfo
-    }) 
+      charInfos.push({
+        char: char,
+        charInfo: charInfo, 
+      }) 
   })
 
-  res.send({
+  res.send({ 
     data: charInfos,
+    success: true
+  })
+});
+router.get('/variant', (req: express.Request, res: express.Response) => {
+  // const charList: string[] = req?.body?.char || [];
+  // const dialectList: string[] = req?.body?.dialect || [];
+  // console.log(req?.body)
+  if (!req.query.q) {
+    throw new Error('请传入汉字！')
+  } else if (typeof req?.query?.q !== 'string') {
+    throw new Error('请传入正确的汉字！')
+  } 
+  const charList: string[] =  (req?.query?.q ?? '').split(',').filter(char => char) 
+
+  const variants = chatService.queryVariants(charList);
+ 
+ 
+
+  res.send({
+    data: variants,
     success: true
   })
 });
