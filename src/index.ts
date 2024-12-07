@@ -2,8 +2,7 @@ import express, { Express, json, urlencoded } from 'ultimate-express';
 import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
-import morgan from 'morgan';
-import session from 'express-session';
+import morgan from 'morgan'; 
 import charRouter from './routes/char';
 import dialectRouter from './routes/dialect';
 import { errorMiddleware } from './middlewares/errorMiddleware';
@@ -13,21 +12,12 @@ import { dialectMiddleware } from './middlewares/dialectMiddleware';
 
 const app: Express = express();
 const port: number = 3000;
-
-// create a write stream (in append mode)
-var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
+ 
  
 // setup the logger
-app.use(morgan('combined', { stream: accessLogStream }))
+app.use(morgan('combined', { stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' }) }))
 
-
-app.use(session({
-  secret: 'mcpdict-session-key', // 用于签名会话ID的密钥
-  resave: false, // 强制重新保存会话，即使会话未被修改
-  saveUninitialized: true, // 是否保存未初始化的会话
-  // cookie: { secure: true } // 如果你使用HTTPS，请取消注释这一行
-}));
-
+ 
 
 // 明确地允许所有源
 app.use(cors({ origin: "*" }));

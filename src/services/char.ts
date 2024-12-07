@@ -4,12 +4,19 @@ import { HZ, VA } from "../utils/constant";
 
 // 查询多个字符的信息
 export function queryChars(charList: string[], dialectList?: string[]): any[] {
-  const placeholders = charList.map(() => '?').join(', ');
-  const sqlStr = `SELECT ${(Array.isArray(dialectList) && dialectList.length > 0 ? [...dialectList, HZ].map(ele => `\`${ele}\``)?.join(', ') : undefined) || '*'} FROM mcpdict WHERE ${HZ} IN (${placeholders})`;
+  const placeholders = charList.join(' OR ');
+  let colStr = '*'
+  if (Array.isArray(dialectList) && dialectList.length > 0) {
+    colStr = [...dialectList, HZ].map(ele => `\`${ele}\``)?.join(', ')
+  }
+  const sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HZ} MATCH '${placeholders}'`;
+  // console.log('sqlStr', sqlStr)
   const stmt = db.prepare(sqlStr);
-  const rows = stmt.all(charList)
+  const rows = stmt.all()
   return rows;
 }
+
+ 
 
 // 查询多个字符的变体
 export function queryVariants(charList: string[]): string[] {

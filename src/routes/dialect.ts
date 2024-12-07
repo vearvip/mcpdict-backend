@@ -8,18 +8,10 @@ const router = express.Router();
 
 
 router.get('/', async (req: express.Request, res: express.Response) => {
-  // let dialectInfos 
-  // if (req.session.dialectInfos) {
-  //   dialectInfos = req.session.dialectInfos
-  // } else {
-  //   dialectInfos = dialectService.queryDialectInfos().filter(ele => ele[YDYS]); 
-  //   req.session.dialectInfos = dialectInfos
-  //   req.session.dialectNames = dialectInfos.map(ele => ele[JC])
-  // } 
 
   res.send({
     success: true,
-    data: req.session.dialectInfos
+    data: req.app.locals.dialectInfos
   }) 
 });
 router.get('/geo', async (req: express.Request, res: express.Response) => {

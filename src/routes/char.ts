@@ -1,7 +1,7 @@
 import express from 'ultimate-express';
 import { queryVariant } from "@vearvip/hanzi-utils";
 import * as chatService from '../services/char'; 
-import { BLACK_LIST, HZ } from '../utils/constant';  
+import { HZ } from '../utils/constant';  
 const router = express.Router();
  
 
@@ -49,7 +49,7 @@ router.get('/', (req: express.Request, res: express.Response) => {
       const element = charInfo[dialectName];
       if (
         !element
-        || !req.session.dialectNames.includes(dialectName)
+        || !req.app.locals.dialectNames.includes(dialectName)
       ) {
         delete charInfo[dialectName];
       } 
@@ -100,7 +100,7 @@ router.post('/long', (req: express.Request, res: express.Response) => {
       const element = charInfo[dialectName];
       if (
         !element
-        || !req.session.dialectNames.includes(dialectName)
+        || !req.app.locals.dialectNames.includes(dialectName)
       ) {
         delete charInfo[dialectName];
       } 
