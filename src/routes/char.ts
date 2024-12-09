@@ -59,6 +59,56 @@ router.get('/', (req: express.Request, res: express.Response) => {
     success: true
   })
 });
+
+router.post('/', (req: express.Request, res: express.Response) => {
+  const charList: string[] = req?.body?.charList || [];
+  const dialectList: string[] = req?.body?.dialectList || [];
+  // console.log(req?.body)
+  if (!charList) {
+    throw new Error('请传入汉字！')
+  } 
+
+  if (
+    !charList || !Array.isArray(charList)
+    || (dialectList && !Array.isArray(dialectList))
+  ) {
+    throw new Error('请传入正确的查询参数')
+  } else if (charList.length > 10) {
+    throw new Error('单次查询，不能超过10个汉字！')
+  } 
+
+  const variants = chatService.queryVariants(charList);
+ 
+  // console.log('variants', variants) 
+  const charRows = chatService.queryChars(variants, dialectList);
+ 
+  const charInfos: any[] = []
+
+  variants.forEach(char => {
+    const charInfo = charRows.find(charRow => charRow[HZ] === char)
+      delete charInfo[HZ];
+      for (const dialectName in charInfo) { 
+        const element = charInfo[dialectName];
+        if (
+          !element
+          || !req.app.locals.dialectNames.includes(dialectName)
+        ) {
+          delete charInfo[dialectName];
+        } 
+      } 
+      charInfos.push({
+        char: char,
+        charInfo: charInfo, 
+      }) 
+  })
+
+  res.send({ 
+    data: charInfos,
+    variants: variants,
+    success: true
+  })
+});
+
 router.get('/variant', (req: express.Request, res: express.Response) => { 
   if (!req.query.q) {
     throw new Error('请传入汉字！')
