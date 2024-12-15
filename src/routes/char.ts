@@ -159,6 +159,26 @@ router.post('/long', (req: express.Request, res: express.Response) => {
 });
 
  
+router.post('/info', (req: express.Request, res: express.Response) => {
+  const char: string = req?.body?.char 
+  const infoKeyList: string[] = req?.body?.infoKeyList 
+  // console.log(req?.body)
+  if (!char) {
+    throw new Error('请传入汉字！')
+  } 
+  if (!infoKeyList || !Array.isArray(infoKeyList) || infoKeyList.length === 0) {
+    throw new Error('请传入需要查询的信息名称！')
+  } 
+   
+  const charRows = chatService.queryCharInfo(char, infoKeyList);
+  
+
+  res.send({ 
+    data: charRows, 
+    success: true
+  })
+});
+
 
  
 

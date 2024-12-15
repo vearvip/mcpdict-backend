@@ -16,6 +16,19 @@ export function queryChars(charList: string[], dialectList?: string[]): any[] {
   return rows;
 }
 
+// 查询多个字符的信息
+export function queryCharInfo(char: string, infoKeyList: string[]): any[] { 
+  let colStr = '*'
+  if (Array.isArray(infoKeyList) && infoKeyList.length > 0) {
+    colStr = [...infoKeyList, HZ].map(ele => `\`${ele}\``)?.join(', ')
+  }
+  const sqlStr = `SELECT ${colStr}, ${HZ} FROM mcpdict WHERE ${HZ} MATCH '${char}'`;
+  // console.log('sqlStr', sqlStr)
+  const stmt = db.prepare(sqlStr);
+  const rows = stmt.all()
+  return rows;
+}
+
  
 
 // 查询多个字符的变体
