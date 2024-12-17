@@ -132,6 +132,8 @@ package-lock.json
 
 MCPDict/
 
+.bunrc
+
 mcpdict.db
 pnpm-lock.yaml
 
