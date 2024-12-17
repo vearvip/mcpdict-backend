@@ -39,7 +39,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # 定义路径
-    repo_url = "https://github.com/osfans/MCPDict.git"
+    repo_url = "https://kkgithub.com/osfans/MCPDict.git"
     repo_dir = os.path.join(script_dir, "MCPDict/")
     tools_dir = os.path.join(repo_dir, "tools/")
     requirements_file = os.path.join(tools_dir, "requirements.txt")
