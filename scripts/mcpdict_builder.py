@@ -39,7 +39,7 @@ def main():
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     # 定义路径
-    repo_url = "https://kkgithub.com/osfans/MCPDict.git"
+    repo_url = "https://github.com/osfans/MCPDict.git"
     repo_dir = os.path.join(script_dir, "MCPDict/")
     tools_dir = os.path.join(repo_dir, "tools/")
     requirements_file = os.path.join(tools_dir, "requirements.txt")
@@ -57,20 +57,17 @@ def main():
 
     # 初始化计时变量
     clone_time = 0
-    pull_time = 0
     install_time = 0
     make_time = 0
     move_time = 0
 
-    # 检查是否已经存在 MCPDict 目录
+    # 总是删除 MCPDict 目录（如果存在），然后进行浅克隆
     if os.path.exists(repo_dir):
-        print(f"{bcolors.FLUORESCENT_GREEN}本地已存在 MCPDict 目录，尝试拉取最新的 master 分支...{bcolors.ENDC}")
-        os.chdir(repo_dir)
-        pull_time = run_command_with_progress("git pull origin master")
-        os.chdir(script_dir)
-    else:
-        print(f"{bcolors.FLUORESCENT_GREEN}正在克隆仓库...{bcolors.ENDC}")
-        clone_time = run_command_with_progress(f"git clone --depth 1 --progress {repo_url} {repo_dir}")
+        print(f"{bcolors.FLUORESCENT_GREEN}正在删除现有的 MCPDict 目录...{bcolors.ENDC}")
+        shutil.rmtree(repo_dir)  # 删除目录及其所有内容
+
+    print(f"{bcolors.FLUORESCENT_GREEN}正在克隆仓库...{bcolors.ENDC}")
+    clone_time = run_command_with_progress(f"git clone --depth 1 --progress {repo_url} {repo_dir}")
 
     # 检查并选择合适的 pip 命令
     pip_command = check_pip_command()
@@ -119,7 +116,6 @@ def main():
 
     # 打印耗时信息
     print(f"{bcolors.OKBLUE}克隆仓库用了 {bcolors.HEADER}{clone_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
-    print(f"{bcolors.OKBLUE}拉取最新分支用了 {bcolors.HEADER}{pull_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
     print(f"{bcolors.OKBLUE}安装依赖用了 {bcolors.HEADER}{install_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
     print(f"{bcolors.OKBLUE}执行 make.py 用了 {bcolors.HEADER}{make_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
     print(f"{bcolors.OKBLUE}移动 .db 文件和 geojson 文件用了 {bcolors.HEADER}{move_time:.2f} 秒{bcolors.OKBLUE}{bcolors.ENDC}")
