@@ -1,5 +1,7 @@
 import { Elysia } from "elysia";
 
-export const dialectRoutes = new Elysia().group("/dialects", (app) =>
-  app.get("/", () => "List dialects").post("/", () => "Create dialect")
+export const dialectRoutes = new Elysia().group("/dialect", (app) =>
+  app.get("/", ({store}) =>  {
+    return store.dialectInfos
+  })
 );

@@ -1,18 +1,16 @@
-FROM oven/bun:1 AS build
+FROM oven/bun AS build
 
 WORKDIR /app
 
-# Cache packages
+# Cache packages installation
 COPY package.json package.json
 COPY bun.lockb bun.lockb
-
-COPY /apps/server/package.json ./apps/server/package.json
-COPY /packages/config/package.json ./packages/config/package.json
+COPY bun.lockb bun.lockb
+COPY .npmrc .npmrc
 
 RUN bun install
 
-COPY /apps/server ./apps/server
-COPY /packages/config ./packages/config
+COPY ./src ./src
 
 ENV NODE_ENV=production
 
@@ -29,6 +27,7 @@ FROM gcr.io/distroless/base
 WORKDIR /app
 
 COPY --from=build /app/server server
+COPY ./src/database/mcpdict.db mcpdict.db
 
 ENV NODE_ENV=production
 

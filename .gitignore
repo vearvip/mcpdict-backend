@@ -41,4 +41,5 @@ mcpdict.db
 **/*.tgz
 **/*.log
 package-lock.json
+pnpm-lock.yaml
 **/*.bun

@@ -2,9 +2,9 @@
   "name": "elysia-ceshi",
   "version": "1.0.50",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "bun run --watch src/index.ts",
-    "deploy": "docker-compose up --build -d"
+    "build": "docker build -t mcpdict_backend .",
+    "deploy": "docker run -d -p 3000:3000 --name mcpdict_backend mcpdict_backend"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.1.1",
