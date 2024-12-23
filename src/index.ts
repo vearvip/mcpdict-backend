@@ -5,14 +5,18 @@ import { charRoutes } from "./routes/char";
 import { cors } from '@elysiajs/cors'
 import { dbClient } from './database'
 import { JianCheng, YinDianYanSe } from "./utils/constant";
-const app = new Elysia({
+
+ 
+
+const app = new Elysia ({
   store: {
     dialectInfos: null,
     dialectNames: null
   }
 });
+
 // 创建一个插件用于初始化方言信息
-const dialectPlugin = (app: Elysia) => {
+export const dialectPlugin = (app: Elysia) => {
   if (!app.store.dialectInfos) {
     const sqlStr = `SELECT * FROM info`;
     const stmt = dbClient.prepare(sqlStr);
@@ -23,19 +27,49 @@ const dialectPlugin = (app: Elysia) => {
     app.store.dialectNames = dialectInfos.map(ele => ele[JianCheng]);
   }
 };
+// 创建一个插件用于捕获异常
+export const errorFormatterPlugin = (app: Elysia) => {
+  return app.onError(({ code, error }) => {
+    // console.error('error', error) 
+    if (code === 'NOT_FOUND') {
+        return {
+          success: false,
+          message: '你迷路了老铁😜'
+        }
+    }
+
+    return {
+      success: false,
+      message: error.message
+    };
+  });
+};
+// 创建一个插件用于包装返回信息
+export const responseFormatterPlugin = (app: Elysia) => {
+  return app.onAfterHandle(({ response }) => {
+    // console.error('response', response)
+    if (response instanceof Response) {
+      return response; // 如果是原生Response对象，不做处理
+    }
  
+    return {
+      success: true,
+      data: response
+    };
+  });
+};
+
+
+
 app.use(cors())
+
+app.use(responseFormatterPlugin)
+app.use(errorFormatterPlugin)
+
+
 app.use(dialectPlugin)
 // 注册路由
 app.use(swagger()).use(dialectRoutes).use(charRoutes)
-
-
-
-// 处理未匹配到的路由
-app.all("*", () => {
-  return new Response("Not Found", { status: 404 });
-});
-
 
 app.listen(3000);
 
