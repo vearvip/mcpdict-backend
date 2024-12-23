@@ -10,6 +10,10 @@
 > [https://server.mcpdict.vear.vip/swagger](https://server.mcpdict.vear.vip/swagger)
 ## 快速上手
 ### 开发阶段
+#### 构建数据库 
+```bash
+bun run makedb
+``` 
 #### 安装依赖 
 ```bash
 bun install
