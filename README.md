@@ -11,7 +11,7 @@
 ## 快速上手
 ### 开发阶段
 #### 构建数据库 
-请确保本地安装了Python并且在版本是Python3，然后再运行命令
+请确保本地安装了Python并且版本是Python3，然后再运行命令
 ```bash
 bun run makedb
 ``` 
