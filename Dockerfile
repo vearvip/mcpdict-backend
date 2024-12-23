@@ -43,7 +43,7 @@ RUN bun build \
     ./src/index.ts
 
 # 第三阶段：最终镜像
-FROM gcr.io/distroless/base
+FROM oven/bun
 
 WORKDIR /app
 
