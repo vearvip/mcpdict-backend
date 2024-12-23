@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "bun run --watch src/index.ts",
     "build": "docker build -t mcpdict_backend .",
-    "deploy": "docker run -d -p 3000:3000 --name mcpdict_backend mcpdict_backend"
+    "deploy": "docker stop mcpdict_backend && docker rm mcpdict_backend && docker run -d -p 3000:3000 --name mcpdict_backend mcpdict_backend"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.1.1",
