@@ -1,4 +1,4 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import * as chatService from '../services/char';
 import { HanZi } from '../utils/constant';
 
@@ -24,7 +24,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       })
 
       return { data: charInfos, variants, success: true };
-    })
+    } )
     .get('/variant', ({ query }) => {
       if (!query.q) throw new Error('请传入汉字！');
       if (typeof query.q !== 'string') throw new Error('请传入正确的汉字！');
