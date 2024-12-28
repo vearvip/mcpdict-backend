@@ -1,5 +1,5 @@
 # 第一阶段：构建和生成 mcpdict.db
-FROM python:3.10-slim AS builder
+FROM python:3.13-slim AS builder
 
 WORKDIR /app
 
