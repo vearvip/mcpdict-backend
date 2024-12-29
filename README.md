@@ -1,6 +1,8 @@
 # 汉字音典 服务端 
 ## 项目介绍
 > 汉字音典服务端，基于[Bun](https://github.com/oven-sh/bun)和[Elysia](https://github.com/elysiajs/elysia)开发，数据源于[osfans/MCPDict](https://github.com/osfans/MCPDict)
+
+当前是`服务端仓库`，`前端仓库`请访问:[vearvip/mcpdict-frontend](https://github.com/vearvip/mcpdict-frontend)
 ## 项目依赖
   - 运行环境：[Bun](https://github.com/oven-sh/bun)
   - 服务端框架：[Elysia](https://github.com/elysiajs/elysia)
