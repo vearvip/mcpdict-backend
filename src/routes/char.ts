@@ -23,7 +23,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
         return { char, charInfo };
       })
 
-      return { data: charInfos, variants, success: true };
+      return { data: charInfos, variants };
     } )
     .get('/variant', ({ query }) => {
       if (!query.q) throw new Error('请传入汉字！');
