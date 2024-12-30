@@ -41,7 +41,8 @@ def main():
     # 定义路径
     # repo_url = "https://github.com/osfans/MCPDict.git"
     # repo_url = "https://kkgithub.com/osfans/MCPDict.git"
-    repo_url = "https://gitee.com/vearvip/MCPDict.git"
+    # repo_url = "https://gitee.com/vearvip/MCPDict.git"
+    repo_url = "https://gitcode.com/vearvip/MCPDict.git"
     
     repo_dir = os.path.join(script_dir, "MCPDict/")
     tools_dir = os.path.join(repo_dir, "tools/")
