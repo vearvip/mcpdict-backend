@@ -14,7 +14,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       const variants = chatService.queryVariants(charList);
       const charRows = chatService.queryChars(variants, dialectList);
       const charInfos = variants.map(char => {
-        const charInfo = charRows.find(charRow => charRow[HanZi] === char);
+        const charInfo = charRows.find(charRow => charRow[HanZi] === char) || {};
         delete charInfo[HanZi];
         for (const dialectName in charInfo) {
           if (!charInfo[dialectName] || !store.dialectNames.includes(dialectName))
@@ -46,7 +46,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       const charInfoObj = {};
 
       variants.forEach(char => {
-        const charInfo = charRows.find(charRow => charRow[HanZi] === char);
+        const charInfo = charRows.find(charRow => charRow[HanZi] === char) || {};
         if (charInfo[dialectName]) {
           charInfoObj[char] = charInfo[dialectName];
         }
