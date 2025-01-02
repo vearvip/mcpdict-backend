@@ -11,7 +11,8 @@ export const charRoutes = new Elysia().group("/char", (app) =>
         throw new Error('请传入正确的查询参数');
       if (charList.length > 10) throw new Error('单次查询，不能超过10个汉字！');
 
-      const variants = chatService.queryVariants(charList);
+      let variants = chatService.queryVariants(charList);
+      variants = [...new Set(variants)]
       const charRows = chatService.queryChars(variants, dialectList);
       const charInfos = variants.map(char => {
         const charInfo = charRows.find(charRow => charRow[HanZi] === char) || {};
@@ -41,7 +42,8 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       if (charList.length > 1000) throw new Error('单次长文注音，不能超过1000个汉字！');
       if (!dialectName) throw new Error('请选择方言以后再进行长文搜索！');
 
-      const variants = chatService.queryVariants(charList);
+      let variants = chatService.queryVariants(charList);
+      variants = [...new Set(variants)]
       const charRows = chatService.queryChars(variants, [dialectName]);
       const charInfoObj = {};
 
