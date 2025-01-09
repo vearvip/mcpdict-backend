@@ -11,7 +11,11 @@ RUN apt-get update && \
 # 将构建脚本复制到容器中并执行以生成 mcpdict.db 
 COPY ./scripts/ ./scripts/
 COPY ./src ./src
-RUN python ./scripts/mcpdict_builder.py
+
+# 引入时间戳以避免缓存
+ARG TIMESTAMP=$(date +%s)
+RUN echo "Building at ${TIMESTAMP}" && \
+    python ./scripts/mcpdict_builder.py
 
 # 确认 mcpdict.db 文件是否已经生成
 RUN ls -la ./scripts/
@@ -57,3 +61,6 @@ ENV NODE_ENV=production
 CMD ["./server"]
 
 EXPOSE 3000
+
+
+
