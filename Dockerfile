@@ -11,7 +11,7 @@ RUN apt-get update && \
 # 将构建脚本复制到容器中并执行以生成 mcpdict.db 
 COPY ./scripts/ ./scripts/
 COPY ./src ./src
-RUN --no-cache python ./scripts/mcpdict_builder.py
+RUN python ./scripts/mcpdict_builder.py
 
 # 确认 mcpdict.db 文件是否已经生成
 RUN ls -la ./scripts/
