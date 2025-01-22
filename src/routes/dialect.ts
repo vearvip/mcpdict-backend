@@ -20,7 +20,11 @@ import {
   Xian,
   Zhen,
   Cun,
-  ZiRanCun, 
+  ZiRanCun,
+  ZiShu,
+  WuZhengZiShu,
+  YinJieShu,
+  BuDaiDiaoYinJieShu, 
 } from "../utils/constant";
 
 export const dialectRoutes = new Elysia().group("/dialect", (app) =>
@@ -45,6 +49,10 @@ export const dialectRoutes = new Elysia().group("/dialect", (app) =>
           [Zhen]: item[Zhen], // [13] 镇
           [Cun]: item[Cun], // [14] 村
           [ZiRanCun]: item[ZiRanCun], // [15] 自然村
+          [ZiShu]: item[ZiShu], // [16] 字數
+          [WuZhengZiShu]: item[WuZhengZiShu], // [17] □數
+          [YinJieShu]: item[YinJieShu], // [18] 音節數
+          [BuDaiDiaoYinJieShu]: item[BuDaiDiaoYinJieShu], // [19] 不帶調音節數
         }
         return Object.values(element)
       })
