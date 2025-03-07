@@ -12,13 +12,15 @@ RUN apt-get update && \
 COPY ./scripts/ ./scripts/
 COPY ./src ./src
 
-# 引入时间戳以避免缓存
-ARG TIMESTAMP=$(date +%s)
+# 关键修改点：声明可注入的构建参数，以避免缓存
+ARG TIMESTAMP
+
 RUN echo "Building at ${TIMESTAMP}" && \
     python ./scripts/mcpdict_builder.py
 
 # 确认 mcpdict.db 文件是否已经生成
 RUN ls -la ./scripts/
+RUN ls -la ./src/database/
 
 # 第二阶段：构建应用程序
 FROM oven/bun AS build
