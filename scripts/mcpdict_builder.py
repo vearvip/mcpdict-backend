@@ -29,8 +29,9 @@ def run_command_with_progress(command, cwd=None):
 def check_pip_command():
     """Check if pip3 command exists, otherwise use pip."""
     try:
-        subprocess.run(["pip3", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return "pip3"
+        # subprocess.run(["pip3", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        subprocess.run(["python3 -m pip", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return "python3 -m pip"
     except subprocess.CalledProcessError:
         return "pip"
 
@@ -94,7 +95,7 @@ def main():
 
     # 运行 make.py 脚本
     print(f"{bcolors.FLUORESCENT_GREEN}正在运行 make.py 脚本...{bcolors.ENDC}")
-    make_time = run_command_with_progress(f"python3 {make_script}", cwd=tools_dir)
+    make_time = run_command_with_progress(f"python3 {make_script} -c", cwd=tools_dir)
 
     # 检查生成的数据库文件是否存在
     if not os.path.exists(db_source_path):
