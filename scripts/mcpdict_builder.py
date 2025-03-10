@@ -29,9 +29,8 @@ def run_command_with_progress(command, cwd=None):
 def check_pip_command():
     """Check if pip3 command exists, otherwise use pip."""
     try:
-        # subprocess.run(["pip3", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        subprocess.run(["python3 -m pip", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        return "python3 -m pip"
+        subprocess.run(["pip3", "--version"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return "pip3"
     except subprocess.CalledProcessError:
         return "pip"
 
