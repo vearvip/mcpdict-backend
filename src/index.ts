@@ -11,12 +11,27 @@ const { dialectInfos, dialectNames } = queryDialectInfos()
 const app = new Elysia()
   .state({ dialectInfos, dialectNames })
 
+function getDomain(url: string | null) {
+    try {
+        const parsedUrl = new URL(url || '');
+        return parsedUrl.origin; // 返回协议 + 域名，例如 "https://zany-eureka-9qrg9vjvqgjc95rw-3000.app.github.dev"
+    } catch (error: any) {
+        console.error("提供的字符串不是有效的URL:", error.message);
+        return null;
+    }
+}
  
 app.use(cors({
-  origin: [
-    /.*\.vear\.vip$/,
-    /.*\.github\.dev$/,
-  ]
+  origin: (request: Request) => {
+    const domain = getDomain(request.headers.get('referer')) || ''
+    const vearVipMatchResult = /.*\.vear\.vip$/.test(domain)
+    const githubDevMatchResult = /.*\.github\.dev$/.test(domain)
+    // console.log({
+    //   vearVipMatchResult,
+    //   githubDevMatchResult
+    // })
+    return  vearVipMatchResult || githubDevMatchResult
+  }
 }))
 
 // 包装成功返回信息
