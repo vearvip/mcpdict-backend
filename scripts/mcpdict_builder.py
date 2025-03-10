@@ -34,6 +34,7 @@ def check_pip_command():
     except subprocess.CalledProcessError:
         return "pip"
 
+
 def main():
     # 获取当前脚本的绝对路径
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -94,7 +95,7 @@ def main():
 
     # 运行 make.py 脚本
     print(f"{bcolors.FLUORESCENT_GREEN}正在运行 make.py 脚本...{bcolors.ENDC}")
-    make_time = run_command_with_progress(f"python3 {make_script} -c", cwd=tools_dir)
+    make_time = run_command_with_progress(f"python {make_script} -c", cwd=tools_dir)
 
     # 检查生成的数据库文件是否存在
     if not os.path.exists(db_source_path):
