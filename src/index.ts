@@ -12,7 +12,12 @@ const app = new Elysia()
   .state({ dialectInfos, dialectNames })
 
  
-app.use(cors())
+app.use(cors({
+  origin: [
+    /.*\.vear\.vip$/,
+    /.*\.github\.dev$/,
+  ]
+}))
 
 // 包装成功返回信息
 app.use(responseFormatterPlugin)
