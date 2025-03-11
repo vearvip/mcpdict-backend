@@ -4,10 +4,10 @@
   "scripts": {
     "makedb": "python ./scripts/mcpdict_builder.py",
     "dev": "bun run --watch src/index.ts",
-    "build": "docker build -t mcpdict_backend .",
+    "build": "docker build --build-arg TIMESTAMP=$(date +%s) -t mcpdict_backend .",
     "stop": "docker stop mcpdict_backend || true && docker rm mcpdict_backend || true",
     "work": "docker run -d -p 3000:3000 --name mcpdict_backend mcpdict_backend",
-    "deploy": "docker build -t mcpdict_backend . && docker stop mcpdict_backend || true && docker rm mcpdict_backend || true && docker run -d -p 3000:3000 --name mcpdict_backend mcpdict_backend"
+    "deploy": "docker build --build-arg TIMESTAMP=$(date +%s) -t mcpdict_backend . && docker stop mcpdict_backend || true && docker rm mcpdict_backend || true && docker run -d -p 3000:3000 --name mcpdict_backend mcpdict_backend"
   },
   "dependencies": {
     "@elysiajs/cors": "^1.1.1",
