@@ -26,11 +26,12 @@ app.use(cors({
     const domain = getDomain(request.headers.get('referer')) || ''
     const vearVipMatchResult = /.*\.vear\.vip$/.test(domain)
     const githubDevMatchResult = /.*\.github\.dev$/.test(domain)
-    // console.log({
-    //   vearVipMatchResult,
-    //   githubDevMatchResult
-    // })
-    return  vearVipMatchResult || githubDevMatchResult
+    console.log({
+      vearVipMatchResult,
+      githubDevMatchResult,
+      referer:request.headers.get('referer')
+    })
+    // return  vearVipMatchResult || githubDevMatchResult
   }
 }))
 
