@@ -1,22 +1,65 @@
 import { extractHanzi } from "@vearvip/hanzi-utils";
 import { dbClient } from "../database";
-import { HanZi,  YiTiZi } from "../utils/constant";
+import { HanZi, YiTiZi } from "../utils/constant";
+
+export type QueryType = 'hanzi' | 'duyin' | 'zhushi' | 'cidian'
 
 // 查询多个字符的信息
-export function queryChars(charList: string[], dialectList?: string[]): any[] {
+export function queryChars(charList: string[], dialectList?: string[], queryType: QueryType = 'hanzi'): any[] {
   const placeholders = charList.join(' OR ');
   let colStr = '*'
   if (Array.isArray(dialectList) && dialectList.length > 0) {
     colStr = [...dialectList, HanZi].map(ele => `\`${ele}\``)?.join(', ')
   }
-  const sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`;
+  let sqlStr
+  if (queryType == 'hanzi') {
+    sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`
+  } else if (queryType == 'duyin') {
+    sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`
+    sqlStr = `
+      SELECT ${colStr} FROM mcpdict 
+        WHERE ${(dialectList ?? []).map(dialectName => {
+      return `CAST(${dialectName} AS TEXT) LIKE '%${placeholders}%'`
+    }).join(' OR ')
+      }
+    `
+  } else if (queryType == 'zhushi') {
+    sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`
+  } else if (queryType == 'cidian') {
+    sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`
+  }
+  // console.log('sqlStr', sqlStr) 
+  const rows = dbClient.query(sqlStr).all();
+  return rows;
+}
+// 查询多个字符的信息
+export function queryCharsByType(queryStr: string, dialectList?: string[], queryType: QueryType = 'hanzi'): any[] {
+
+  let colStr = '*'
+  if (Array.isArray(dialectList) && dialectList.length > 0) {
+    colStr = [...dialectList, HanZi].map(ele => `\`${ele}\``)?.join(', ')
+  }
+  let sqlStr = ''
+  if (queryType == 'duyin') {
+    sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${(dialectList ?? []).map(dialectName => {
+      return `${dialectName} MATCH '${queryStr}*'`
+    }).join(' OR ')}`
+    // console.log('sqlStr:', sqlStr)
+  } else if (queryType == 'zhushi') {
+   sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${(dialectList ?? []).map(dialectName => {
+      return `${dialectName} MATCH '${queryStr}'`
+    }).join(' OR ')}`
+    console.log('sqlStr:', sqlStr)
+  } else if (queryType == 'cidian') {
+    // sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${queryStr}'`
+  }
   // console.log('sqlStr', sqlStr) 
   const rows = dbClient.query(sqlStr).all();
   return rows;
 }
 
 // 查询多个字符的信息
-export function queryCharInfo(char: string, infoKeyList: string[]): any[] { 
+export function queryCharInfo(char: string, infoKeyList: string[]): any[] {
   let colStr = '*'
   if (Array.isArray(infoKeyList) && infoKeyList.length > 0) {
     colStr = [...infoKeyList, HanZi].map(ele => `\`${ele}\``)?.join(', ')
@@ -27,10 +70,10 @@ export function queryCharInfo(char: string, infoKeyList: string[]): any[] {
   return rows;
 }
 
- 
+
 
 // 查询多个字符的变体
-export function queryVariants(charList: string[]): string[] { 
+export function queryVariants(charList: string[]): string[] {
   const hanziCharList = extractHanzi(charList.join('')); // 提取字符串中的汉字
   const placeholders = hanziCharList.join(' OR ');
   const sqlStr = `SELECT ${HanZi}, ${YiTiZi} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`;

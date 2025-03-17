@@ -6,12 +6,13 @@ export const charRoutes = new Elysia().group("/char", (app) =>
   app
     .post('/', ({ body, store }) => {
       const charList: string[] = (body as any).charList
-      const dialectList: string[] = (body as any).dialectList;
+      const dialectList: string[] = (body as any).dialectList; 
+
       if (!charList || !Array.isArray(charList) || (dialectList && !Array.isArray(dialectList)))
         throw new Error('请传入正确的查询参数');
       if (charList.length > 10) throw new Error('单次查询，不能超过10个汉字！');
-
       const variants = chatService.queryVariants(charList);
+
       const charRows = chatService.queryChars(variants, dialectList);
       const charInfos = variants.map(char => {
         const charInfo = charRows.find(charRow => charRow[HanZi] === char) || {};
@@ -24,7 +25,17 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       })
 
       return { data: charInfos, variants };
-    } )
+    })
+    .post('/byType', ({ body, store }) => { 
+      const queryStr: string = (body as any).queryStr
+      const dialectList: string[] = (body as any).dialectList;
+      const queryType: chatService.QueryType = (body as any).queryType;
+ 
+
+      const charRows = chatService.queryCharsByType(queryStr, dialectList, queryType);
+ 
+      return { data: charRows };
+    })
     .get('/variant', ({ query }) => {
       if (!query.q) throw new Error('请传入汉字！');
       if (typeof query.q !== 'string') throw new Error('请传入正确的汉字！');
