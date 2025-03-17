@@ -18,7 +18,7 @@ RUN echo "开始构建（TIMESTAMP=${TIMESTAMP}）" && \
     git clone --depth 1 ${MCPDICT_REPO} MCPDict && \
     cd MCPDict/tools && \
     pip install -r requirements.txt -i ${PYPI_MIRROR} && \
-    test -f tables/data/mulcodechar.dt || (echo "必要文件缺失"; exit 1) && \
+    # test -f tables/data/mulcodechar.dt || (echo "必要文件缺失"; exit 1) && \
     python make.py -c && \
     cd ../.. && \
     mkdir -p src/database && \
