@@ -39,7 +39,7 @@ export function queryCharsByType(
     } else {
       sqlStr = `SELECT ${colStr} FROM ipa WHERE ${(dialectList ?? [])
         .map((dialectName) => {
-          return `${dialectName} MATCH '${queryStr}'`;
+          return `${dialectName} MATCH '${queryStr}*'`;
         })
         .join(" OR ")}`;
     }
@@ -50,7 +50,7 @@ export function queryCharsByType(
     } else {
       sqlStr = `SELECT ${colStr} FROM explain WHERE ${(dialectList ?? [])
         .map((dialectName) => {
-          return `${dialectName} MATCH '${queryStr}'`;
+          return `${dialectName} MATCH '${queryStr}*'`;
         })
         .join(" OR ")}`;
     }

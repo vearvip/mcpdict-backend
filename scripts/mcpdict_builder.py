@@ -86,12 +86,12 @@ def main():
     install_time = run_command_with_progress(f"{pip_command} install -r {requirements_file} -i {pypi_mirror}")
 
     # 检查必要的文件是否存在
-    required_files = [
-        os.path.join(tools_dir, "tables/data/mulcodechar.dt")
-    ]
-    for file_path in required_files:
-        if not os.path.exists(file_path):
-            raise FileNotFoundError(f"文件不存在: {file_path}")
+    # required_files = [
+    #     os.path.join(tools_dir, "tables/data/mulcodechar.dt")
+    # ]
+    # for file_path in required_files:
+    #     if not os.path.exists(file_path):
+    #         raise FileNotFoundError(f"文件不存在: {file_path}")
 
     # 运行 make.py 脚本
     print(f"{bcolors.FLUORESCENT_GREEN}正在运行 make.py 脚本...{bcolors.ENDC}")
