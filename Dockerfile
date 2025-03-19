@@ -9,7 +9,7 @@ COPY bun.lockb .
 COPY .npmrc .
 RUN bun install
 
-# 复制源代码和数据库（之前阶段生成的 mcpdict.db）
+# 复制源代码
 COPY ./src ./src
 
 # 构建生产版本
@@ -29,8 +29,8 @@ WORKDIR /app
 
 # 复制构建产物
 COPY --from=build /app/server server
-# 复制之前阶段生成的 mcpdict.db
-COPY --from=build /app/src/database/mcpdict.db mcpdict.db
+# 复制数据库
+COPY --from=build /app/src/database/sub_mcpdict.db sub_mcpdict.db
 
 ENV NODE_ENV=production
 
