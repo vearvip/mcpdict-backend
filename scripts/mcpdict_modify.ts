@@ -80,22 +80,30 @@ subDbClient.exec(`
   PRAGMA cache_size = -100000;
 `);
 
-const ipaColumns = [HanZi, ...validDialects.map((d) => d.columnName)];
-subDbClient.exec(`DROP TABLE IF EXISTS ipa`);
-subDbClient.exec(`CREATE VIRTUAL TABLE ipa USING fts5(${ipaColumns.join(", ")})`);
+// 创建虚拟表（新增 info 和 mcpdict 表）
+const createVirtualTable = (table: string, columns: string[]) => {
+  subDbClient.exec(`DROP TABLE IF EXISTS ${table}`);
+  subDbClient.exec(
+    `CREATE VIRTUAL TABLE ${table} USING fts5(${columns.join(", ")})`
+  );
+};
 
-subDbClient.exec(`DROP TABLE IF EXISTS explain`);
-subDbClient.exec(
-  `CREATE VIRTUAL TABLE explain USING fts5(${ipaColumns.join(", ")})`
-);
+// 动态获取列名并包裹反引号
+const getWrappedColumns = (data: any[]) => 
+  Object.keys(data[0] || {}).map(col => `\`${col}\``);
+
+createVirtualTable("info", getWrappedColumns(infoData));
+createVirtualTable("mcpdict", getWrappedColumns(mcpdictData));
+
+const ipaColumns = [HanZi, ...validDialects.map((d) => d.columnName)];
+createVirtualTable("ipa", ipaColumns);
+createVirtualTable("explain", ipaColumns);
 console.timeEnd("3️⃣ 数据库初始化");
 
 // 修复后的批量插入方法
 console.time("4️⃣ 数据插入");
 const optimizedInsert = async (table: string, columns: string[], data: any[]) => {
-  const CHUNK_SIZE = 2000;  // 减少分块大小
-  const VALUE_GROUP = 50;   // 减少每组数量
-
+  const CHUNK_SIZE = 2000;
   const insert = subDbClient.prepare(
     `INSERT INTO ${table} (${columns.join(",")}) VALUES ` +
     `(${columns.map(() => "?").join(",")})`
@@ -105,15 +113,24 @@ const optimizedInsert = async (table: string, columns: string[], data: any[]) =>
     await subDbClient.transaction(() => {
       const chunk = data.slice(i, i + CHUNK_SIZE);
       for (const row of chunk) {
-        // 使用数组参数代替展开操作符
-        insert.run(columns.map(col => row[col] || ''));
+        const values = columns.map(col => {
+          // 移除列名反引号以匹配原始数据键
+          const rawKey = col.replace(/`/g, '');
+          return row[rawKey] ?? '';
+        });
+        insert.run(...values);
       }
     })();
   }
 };
 
-await optimizedInsert("ipa", ipaColumns, ipaList);
-await optimizedInsert("explain", ipaColumns, explainList);
+// 插入所有表数据
+await Promise.all([
+  optimizedInsert("info", getWrappedColumns(infoData), infoData),
+  optimizedInsert("mcpdict", getWrappedColumns(mcpdictData), mcpdictData),
+  optimizedInsert("ipa", ipaColumns, ipaList),
+  optimizedInsert("explain", ipaColumns, explainList),
+]);
 console.timeEnd("4️⃣ 数据插入");
 
 subDbClient.exec(`

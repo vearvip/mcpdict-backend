@@ -1,5 +1,5 @@
 import { extractHanzi } from "@vearvip/hanzi-utils";
-import { dbClient, subDbClient } from "../database";
+import { dbClient } from "../database";
 import { HanZi, YiTiZi } from "../utils/constant";
 
 export type QueryType = "hanzi" | "duyin" | "zhushi" | "cidian";
@@ -59,7 +59,7 @@ export function queryCharsByType(
     // sqlStr = `SELECT * FROM mcpdict WHERE 普通话 MATCH 'dao1'`
   }
   // console.log('sqlStr', sqlStr)
-  const rows = subDbClient.query(sqlStr).all();
+  const rows = dbClient.query(sqlStr).all();
   return rows;
 }
 
