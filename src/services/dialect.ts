@@ -3,7 +3,6 @@ import { dbClient } from "../database";
 import {
   YuYan,
   JianCheng,
-
   LuRuRen,
   LaiYuan,
   WenJianMing,
@@ -12,19 +11,14 @@ import {
   WuZhengZiShu,
   YinJieShu,
   BuDaiDiaoYinJieShu,
-
   JingWeiDu,
-
   DiTuJiErFenQv,
   DiTuJiErYanSe,
   DiTuJiErPaiXv,
-
   YinDianFenQv,
   YinDianYanSe,
   YinDianPaiXv,
-
   ShengDiao,
-
   Sheng,
   Shi,
   Xian,
@@ -33,21 +27,28 @@ import {
   ZiRanCun,
 } from "../utils/constant";
 
-
 // 查询方言信息
 export const queryDialectInfos = () => {
   const sqlStr = `SELECT * FROM info`;
   const stmt = dbClient.prepare(sqlStr);
   const rows = stmt.all(); // 假设db库支持同步操作
 
-  const dialectInfos = rows
-    .filter((dialectInfoItem: any) => dialectInfoItem[YinDianYanSe])
- 
-  const dialectNames = dialectInfos.map((dialectInfoItem: any) => dialectInfoItem[JianCheng])
+  const dialectInfos = rows.filter(
+    (dialectInfoItem: any) => dialectInfoItem[YinDianYanSe]
+  );
+
+  const dialectNames = dialectInfos.map(
+    (dialectInfoItem: any) => dialectInfoItem[JianCheng]
+  );
+
+  const dialectNamesSet = new Set(dialectNames);
+  const dialectInfosMap = new Map(
+    dialectInfos.map((di) => [di[JianCheng], di])
+  );
   return {
     dialectInfos,
-    dialectNames
-  }
+    dialectNames,
+    dialectNamesSet,
+    dialectInfosMap,
+  };
 };
-
-

@@ -1,6 +1,7 @@
 import { Elysia, t } from "elysia";
 import * as chatService from "../services/char";
-import { HanZi } from "../utils/constant";
+import { HanZi, JianCheng, YinDianFenQv } from "../utils/constant";
+import fs from "fs";
 
 export const charRoutes = new Elysia().group("/char", (app) =>
   app
@@ -23,10 +24,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
           charRows.find((charRow) => charRow[HanZi] === char) || {};
         delete charInfo[HanZi];
         for (const dialectName in charInfo) {
-          if (
-            !charInfo[dialectName] ||
-            !store.dialectNames.includes(dialectName)
-          )
+          if (!charInfo[dialectName] || !store.dialectNamesSet.has(dialectName))
             delete charInfo[dialectName];
         }
         return { char, charInfo };
@@ -37,32 +35,74 @@ export const charRoutes = new Elysia().group("/char", (app) =>
     .post("/byType", ({ body, store }) => {
       const queryStr: string = (body as any).queryStr;
       let dialectList: string[] = (body as any).dialectList;
-      if (
-        !dialectList ||
-        (Array.isArray(dialectList) && dialectList.length === 0)
-      ) {
-        dialectList = store.dialectNames || [];
-      }
+      const { dialectNamesSet, dialectInfosMap } = store;
+
       const queryType: chatService.QueryType = (body as any).queryType;
-      const charRows = chatService.queryCharsByType(
+      const charRowsByType = chatService.queryCharsByType(
         queryStr,
         dialectList,
         queryType
       );
+      const variants = charRowsByType.map((ele) => ele[HanZi]);
 
-      const variants = charRows.map((ele) => ele[HanZi]);
+      const charRows = chatService.queryChars(variants, dialectList);
+
+      // 预处理：构建高效的数据结构
+      const charMap = new Map(
+        charRows.map((charRow) => [charRow[HanZi], charRow])
+      );
+      // 预编译正则表达式
+      const REGEX_CLEAN = /{[^}]*}|\t/g;
+      const REGEX_EXTRACT = /{([^}]*)}/g;
+
       const charInfos = variants.map((char) => {
-        const charInfo =
-          charRows.find((charRow) => charRow[HanZi] === char) || {};
-        delete charInfo[HanZi];
-        for (const dialectName in charInfo) {
-          if (
-            !charInfo[dialectName] ||
-            !store.dialectNames.includes(dialectName)
-          )
-            delete charInfo[dialectName];
-        }
-        return { char, charInfo };
+        // 快速查找字符信息（O(1)）
+        const charRow = charMap.get(char) || {};
+
+        // 排除HanZi属性并过滤方言信息
+        const { [HanZi]: _, ...charInfo } = charRow;
+
+        // 一次性过滤所有不符合条件的方言信息
+        const filteredCharInfo = Object.entries(charInfo).reduce(
+          (acc, [dialectName, value]) => {
+            // 获取方言元信息（O(1)）
+            const dialectInfo = dialectInfosMap.get(dialectName);
+
+            let parsedVal;
+            if (queryType === "duyin") {
+              // 处理IPA
+              parsedVal = (value || "").replace(REGEX_CLEAN, (m: string) =>
+                m === "\t" ? "|" : ""
+              );
+            } else if (queryType === "zhushi") {
+              // 处理解释
+              let matches;
+              const extracted: string[] = [];
+              while ((matches = REGEX_EXTRACT.exec(value || "")) !== null) {
+                extracted.push(matches[1]);
+              }
+              parsedVal = extracted.join("|");
+              REGEX_EXTRACT.lastIndex = 0;
+            } else if (queryType === "cidian") {
+              // 处理辞典
+              // todo...
+            }
+
+            // 复合条件判断
+            if (
+              value && // 值必须存在
+              dialectNamesSet.has(dialectName) && // 必须在允许的方言列表中
+              dialectInfo?.[YinDianFenQv] !== "歷史音" && // 排除历史音
+              parsedVal.includes(queryStr) // 必须包含查询字符串
+            ) {
+              acc[dialectName] = value;
+            }
+            return acc;
+          },
+          {}
+        );
+
+        return { char, charInfo: filteredCharInfo };
       });
 
       return { data: charInfos, variants };
