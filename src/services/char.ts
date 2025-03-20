@@ -35,7 +35,7 @@ export function queryCharsByType(
   let sqlStr = "";
   if (queryType == "duyin") {
     if (!dialectList || dialectList.length == 0) {
-      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${queryStr}'`;
+      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${queryStr}*'`;
     } else {
       sqlStr = `SELECT ${colStr} FROM ipa WHERE ${(dialectList ?? [])
         .map((dialectName) => {
@@ -46,7 +46,7 @@ export function queryCharsByType(
     console.log("sqlStr:", sqlStr);
   } else if (queryType == "zhushi") {
     if (!dialectList || dialectList.length == 0) {
-      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${queryStr}'`;
+      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${queryStr}*'`;
     } else {
       sqlStr = `SELECT ${colStr} FROM explain WHERE ${(dialectList ?? [])
         .map((dialectName) => {

@@ -33,11 +33,12 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       return { data: charInfos, variants };
     })
     .post("/byType", ({ body, store }) => {
-      const queryStr: string = (body as any).queryStr;
-      let dialectList: string[] = (body as any).dialectList;
       const { dialectNamesSet, dialectInfosMap } = store;
 
+      const queryStr: string = (body as any).queryStr;
+      let dialectList: string[] = (body as any).dialectList;
       const queryType: chatService.QueryType = (body as any).queryType;
+
       const charRowsByType = chatService.queryCharsByType(
         queryStr,
         dialectList,
