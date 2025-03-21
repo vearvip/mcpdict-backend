@@ -4,8 +4,7 @@ FROM oven/bun AS build
 WORKDIR /app
 
 # 安装依赖
-COPY package.json .
-COPY bun.lockb .
+COPY package.json . 
 COPY .npmrc .
 RUN bun install
 

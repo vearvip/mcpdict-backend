@@ -7,11 +7,9 @@ WORKDIR /app
 # RUN apt-get update && apt-get install -y ... 
 
 # 复制项目文件
-COPY package.json .
-COPY tsconfig.json .
+COPY package.json . 
 COPY src ./src
-COPY scripts ./scripts
-COPY bun.lockb .
+COPY scripts ./scripts 
 COPY .npmrc .
 
 # 安装项目依赖
