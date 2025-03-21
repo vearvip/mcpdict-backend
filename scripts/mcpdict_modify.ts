@@ -64,10 +64,12 @@ console.timeEnd("2️⃣ 数据处理");
 
 // 数据库初始化
 console.time("3️⃣ 数据库初始化");
-const subDbClient = new Database(
-  path.resolve(import.meta.dir, "../src/database/sub_mcpdict.db"),
-  { readonly: false, create: true }
-);
+// const subDbClient = new Database(
+//   path.resolve(import.meta.dir, "../src/database/sub_mcpdict.db"),
+//   { readonly: false, create: true }
+// );
+const DB_PATH = process.env.DB_PATH || path.resolve(import.meta.dir, "../src/database/sub_mcpdict.db");
+const subDbClient = new Database(DB_PATH, { readonly: false, create: true });
 
 subDbClient.exec(`
   PRAGMA journal_mode = MEMORY;
