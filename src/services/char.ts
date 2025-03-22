@@ -1,22 +1,25 @@
 import { extractHanzi } from "@vearvip/hanzi-utils";
 import { dbClient } from "../database";
 import { HanZi, YiTiZi } from "../utils/constant";
+import { escapeFTSQuery } from "../utils";
 
 export type QueryType = "hanzi" | "duyin" | "zhushi" | "cidian";
+
 
 // 查询多个字符的信息
 export function queryChars(
   charList: string[],
   dialectList?: string[],
-  queryType: QueryType = "hanzi"
 ): any[] {
-  const placeholders = charList.join(" OR ");
+  const placeholders = charList.map(query => {
+    return  `${HanZi}:${query}`
+  }).join(" OR ");
   let colStr = "*";
   if (Array.isArray(dialectList) && dialectList.length > 0) {
     colStr = [...dialectList, HanZi].map((ele) => `\`${ele}\``).join(", ");
   }
-  let sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`;
-
+  // let sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`;
+  let sqlStr = `SELECT ${colStr} FROM mcpdict WHERE mcpdict MATCH '${placeholders}'`; 
   // console.log("sqlStr ---- ", sqlStr);
   const rows = dbClient.query(sqlStr).all();
   return rows;
@@ -25,9 +28,10 @@ export function queryChars(
 // 查询多个字符的信息
 export function queryCharsByType(
   queryStr: string,
+  queryType: QueryType,
   dialectList?: string[],
-  queryType: QueryType = "hanzi"
 ): any[] {
+  queryStr = escapeFTSQuery(queryStr)
   let colStr = "*";
   if (Array.isArray(dialectList) && dialectList.length > 0) {
     colStr = [...dialectList, HanZi].map((ele) => `\`${ele}\``).join(", ");
@@ -35,28 +39,28 @@ export function queryCharsByType(
   let sqlStr = "";
   if (queryType == "duyin") {
     if (!dialectList || dialectList.length == 0) {
-      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${queryStr}*'`;
+      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${queryStr}*' LIMIT 20`;
     } else {
-      sqlStr = `SELECT ${colStr} FROM ipa WHERE ${(dialectList ?? [])
+      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${(dialectList ?? [])
         .map((dialectName) => {
-          return `${dialectName} MATCH '${queryStr}*'`;
+          return `"${dialectName}":${queryStr}*`;
         })
-        .join(" OR ")}`;
+        .join(" OR ")}' LIMIT 20`; 
     }
-    console.log("sqlStr:", sqlStr);
+    // console.log("sqlStr:", sqlStr);
   } else if (queryType == "zhushi") {
     if (!dialectList || dialectList.length == 0) {
-      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${queryStr}*'`;
+      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${queryStr}*' LIMIT 20`;
     } else {
-      sqlStr = `SELECT ${colStr} FROM explain WHERE ${(dialectList ?? [])
+      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${(dialectList ?? [])
         .map((dialectName) => {
-          return `${dialectName} MATCH '${queryStr}*'`;
+          return `"${dialectName}":${queryStr}*`;
         })
-        .join(" OR ")}`;
+        .join(" OR ")}' LIMIT 20`; 
     }
-    console.log("sqlStr:", sqlStr);
-  } else if (queryType == "cidian") {
-    // sqlStr = `SELECT * FROM mcpdict WHERE 普通话 MATCH 'dao1'`
+    // console.log("sqlStr:", sqlStr);
+  } else if (queryType == "cidian") { 
+    // --
   }
   // console.log('sqlStr', sqlStr)
   const rows = dbClient.query(sqlStr).all();

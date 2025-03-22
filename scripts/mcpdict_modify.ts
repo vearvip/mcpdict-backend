@@ -19,7 +19,10 @@ const dialectMap = new Map();
 const validDialects: { jianCheng: string; columnName: string }[] = [];
 
 for (const dialect of infoData) {
-  if (dialect[YinDianFenQv] !== "歷史音" && dialect[YinDianYanSe]) {
+  if (
+    // dialect[YinDianFenQv] !== "歷史音" && 
+    dialect[YinDianYanSe]
+  ) {
     const columnName = `\`${dialect[JianCheng]}\``;  // 保留反引号包装
     dialectMap.set(dialect[JianCheng], dialect);
     validDialects.push({ jianCheng: dialect[JianCheng], columnName });
@@ -107,7 +110,7 @@ console.timeEnd("3️⃣ 数据库初始化");
 
 // 修复插入逻辑（关键修改）
 console.time("4️⃣ 数据插入");
-const optimizedInsert = async (table: string, columns: string[], data: any[]) => {
+const optimizedInsert = async (table: string, columns: string[], data: any[], needReplace = false) => {
   const CHUNK_SIZE = 2000;
   const insert = subDbClient.prepare(
     `INSERT INTO ${table} (${columns.join(",")}) VALUES ` +
@@ -119,7 +122,14 @@ const optimizedInsert = async (table: string, columns: string[], data: any[]) =>
       const chunk = data.slice(i, i + CHUNK_SIZE);
       for (const row of chunk) {
         // 直接使用列名作为键（不再去除反引号）
-        const values = columns.map(col => row[col] ?? '');
+        const values = columns.map(col => {
+          let val = row[col] ?? ''
+          if (typeof val === 'string' && needReplace) {
+            val = val.replaceAll(' ', '')
+          } 
+          return val
+        });
+        // console.log('values', values)
         insert.run(...values);
       }
     })();
@@ -142,8 +152,8 @@ await Promise.all([
     });
     return wrappedRow;
   })),
-  optimizedInsert("ipa", ipaColumns, ipaList),
-  optimizedInsert("explain", ipaColumns, explainList)
+  optimizedInsert("ipa", ipaColumns, ipaList, true),
+  optimizedInsert("explain", ipaColumns, explainList, true)
 ]);
 console.timeEnd("4️⃣ 数据插入");
 
