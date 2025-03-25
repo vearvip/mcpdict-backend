@@ -16,7 +16,7 @@
 请确保本地安装了Docker，然后再运行命令
 ```bash
 bun run createdb
-bun run modifydb
+bun run updatedb
 ``` 
 #### 安装依赖 
 ```bash
