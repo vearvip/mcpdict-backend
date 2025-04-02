@@ -3,7 +3,7 @@
   "version": "1.0.50",
   "scripts": {
     "makedb": "python ./scripts/mcpdict_builder.py",
-    "createdb": "docker build -f ./scripts/mcpdict_builder.dockerfile -t mcpdict-builder . && docker create --name temp mcpdict-builder && docker cp temp:/export/database/mcpdict.db ./src/database/ && docker rm temp",
+    "createdb": "docker build --build-arg TIMESTAMP=$(date +%s) -f ./scripts/mcpdict_builder.dockerfile -t mcpdict-builder . && docker create --name temp mcpdict-builder && docker cp temp:/export/database/mcpdict.db ./src/database/ && docker rm temp",
     "modifydb": "bun run --smol --hot ./scripts/mcpdict_modify.ts",
     "updatedb": "docker build -f ./scripts/mcpdict_modify.dockerfile -t mcpdict-modify . && docker run -it --rm -v $(pwd)/src/database:/data mcpdict-modify",
     "dev": "bun run --watch src/index.ts",
