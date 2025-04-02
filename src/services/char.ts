@@ -97,5 +97,5 @@ export function queryVariants(charList: string[]): string[] {
     }
   });
 
-  return variants;
+  return variants.filter(ele => !!ele);
 }
