@@ -10,6 +10,7 @@ export const YuYan = "語言";
 export const JianCheng = "簡稱";
 
 export const LuRuRen = "錄入人";
+export const WeiHuRen = "維護人";
 export const LaiYuan = "來源";
 export const WenJianMing = "文件名";
 export const BanBen = "版本";
@@ -17,6 +18,10 @@ export const ZiShu = "字數";
 export const WuZhengZiShu = "□數";
 export const YinJieShu = "音節數";
 export const BuDaiDiaoYinJieShu = "不帶調音節數";
+
+export const CanKaoWenXian = "參考文獻"
+export const BuChongYueDu = "補充閲讀"
+export const YinXiShuoMing = "音系說明"
 
 export const JingWeiDu = "經緯度";
 

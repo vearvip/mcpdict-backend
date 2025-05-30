@@ -13,6 +13,11 @@ import {
   YinDianYanSe,
   YinDianPaiXv,
 
+  WeiHuRen,
+  CanKaoWenXian,
+  BuChongYueDu,
+  YinXiShuoMing,
+
   ShengDiao,
 
   Sheng,
@@ -53,6 +58,10 @@ export const dialectRoutes = new Elysia().group("/dialect", (app) =>
           [WuZhengZiShu]: item[WuZhengZiShu], // [17] □數
           [YinJieShu]: item[YinJieShu], // [18] 音節數
           [BuDaiDiaoYinJieShu]: item[BuDaiDiaoYinJieShu], // [19] 不帶調音節數
+          [WeiHuRen]: item[WeiHuRen], // [20] 維護人
+          [CanKaoWenXian]: item[CanKaoWenXian], // [21] 參考文獻
+          [BuChongYueDu]: item[BuChongYueDu], // [22] 補充閲讀
+          [YinXiShuoMing]: item[YinXiShuoMing], // [23] 音系說明
         }
         return Object.values(element)
       })
