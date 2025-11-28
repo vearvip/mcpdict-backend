@@ -1,6 +1,6 @@
 import { extractHanzi } from "@vearvip/hanzi-utils";
 import { dbClient } from "../database";
-import { HanZi, YiTiZi } from "../utils/constant";
+import { HanZi, YiTiZi, YuYan, ZiZu } from "../utils/constant";
 import { escapeFTSQuery } from "../utils";
 
 export type QueryType = "hanzi" | "duyin" | "zhushi" | "cidian";
@@ -11,17 +11,16 @@ export function queryChars(
   charList: string[],
   dialectList?: string[],
 ): any[] {
-  const placeholders = charList.map(query => {
-    return  `${HanZi}:${query}`
-  }).join(" OR ");
-  let colStr = "*";
-  if (Array.isArray(dialectList) && dialectList.length > 0) {
-    colStr = [...dialectList, HanZi].map((ele) => `\`${ele}\``).join(", ");
-  }
-  // let sqlStr = `SELECT ${colStr} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`;
-  let sqlStr = `SELECT ${colStr} FROM mcpdict WHERE mcpdict MATCH '${placeholders}'`; 
-  // console.log("sqlStr ---- ", sqlStr);
+  const charStr = `${ZiZu} : (${charList.join(" OR ")})`;
+  const dialectStr = (dialectList && Array.isArray(dialectList) && dialectList.length > 0) 
+    ? `AND ${YuYan} : (${dialectList.join(" OR ")})`   
+    : "";
+
+  let sqlStr = `SELECT * FROM langs WHERE langs MATCH '${charStr} ${dialectStr}'`; 
+
+  console.log("输入SQL：", sqlStr);
   const rows = dbClient.query(sqlStr).all();
+  console.log("查询结果：", rows);
   return rows;
 }
 
