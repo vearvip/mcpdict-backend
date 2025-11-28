@@ -17,20 +17,12 @@ export const charRoutes = new Elysia().group("/char", (app) =>
         throw new Error("请传入正确的查询参数");
       if (charList.length > 10) throw new Error("单次查询，不能超过10个汉字！");
       const variants = chatService.queryVariants(charList);
+      // console.log('variants', variants)
 
       const charRows = chatService.queryChars(variants, dialectList);
-      const charInfos = variants.map((char) => {
-        const charInfo =
-          charRows.find((charRow) => charRow[HanZi] === char) || {};
-        delete charInfo[HanZi];
-        for (const dialectName in charInfo) {
-          if (!charInfo[dialectName] || !store.dialectNamesSet.has(dialectName))
-            delete charInfo[dialectName];
-        }
-        return { char, charInfo };
-      });
+      
 
-      return { data: charInfos, variants };
+      return { data: charRows, variants };
     })
     .post("/byType", ({ body, store }) => {
       const { dialectNamesSet, dialectInfosMap } = store;
@@ -54,7 +46,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
 
       if (Array.isArray(variants) && variants.length > 0) {
         const charRows = chatService.queryChars(variants, dialectList);
- 
+
         // 预处理：构建高效的数据结构
         const charMap = new Map(
           charRows.map((charRow) => [charRow[HanZi], charRow])
@@ -89,7 +81,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
                 while ((matches = REGEX_EXTRACT.exec(value || "")) !== null) {
                   extracted.push(matches[1]);
                 }
-                parsedVal = extracted.join("|").replaceAll(' ',  '');
+                parsedVal = extracted.join("|").replaceAll(' ', '');
                 REGEX_EXTRACT.lastIndex = 0;
               } else if (queryType === "cidian") {
                 // 处理辞典
@@ -112,7 +104,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
           );
 
           return { char, charInfo: filteredCharInfo };
-        }); 
+        });
 
         // const charInfos = variants.map((char) => {
         //   const charInfo =
