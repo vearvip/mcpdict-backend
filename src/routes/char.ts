@@ -144,17 +144,8 @@ export const charRoutes = new Elysia().group("/char", (app) =>
 
       const variants = chatService.queryVariants(charList);
       const charRows = chatService.queryChars(variants, [dialectName]);
-      const charInfoObj = {};
 
-      variants.forEach((char) => {
-        const charInfo =
-          charRows.find((charRow) => charRow[HanZi] === char) || {};
-        if (charInfo[dialectName]) {
-          charInfoObj[char] = charInfo[dialectName];
-        }
-      });
-
-      return { data: charInfoObj, variants };
+      return { data: charRows, variants };
     })
     .post("/info", ({ body }) => {
       const { char, infoKeyList } = body;
