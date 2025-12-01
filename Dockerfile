@@ -29,7 +29,7 @@ WORKDIR /app
 # 复制构建产物
 COPY --from=build /app/server server
 # 复制数据库
-COPY --from=build /app/src/database/sub_mcpdict.db sub_mcpdict.db
+COPY --from=build /app/src/database/mcpdict.db mcpdict.db
 
 ENV NODE_ENV=production
 

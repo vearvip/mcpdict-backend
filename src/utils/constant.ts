@@ -8,6 +8,10 @@ export const YiTiZi = "異體字";
 // 👇🏼👇🏼👇🏼👇🏽👇🏽👇🏽 方言表枚举 👇🏽👇🏽👇🏽👇🏼👇🏼👇🏼
 export const YuYan = "語言";
 export const JianCheng = "簡稱";
+export const ZiZu = "字組";
+export const ZhuShi = "註釋";
+export const DuYin = "讀音";
+
 
 export const LuRuRen = "錄入人";
 export const WeiHuRen = "維護人";
