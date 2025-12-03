@@ -4,7 +4,7 @@ import path from 'path'
 function consoleDir() {
   function listFiles(dir, fileList = []) {
     const files = fs.readdirSync(dir);
-  
+
     files.forEach(file => {
       const name = path.join(dir, file);
       if (fs.statSync(name).isDirectory()) {
@@ -13,17 +13,17 @@ function consoleDir() {
         fileList.push(name);
       }
     });
-  
+
     return fileList;
   }
-  
+
   // 获取当前工作目录
   const currentDir = process.cwd();
-  
+
   // 调用函数并打印结果
   const allFiles = listFiles(currentDir);
-  allFiles.forEach(file => console.log(' --- ',file));
-  
+  allFiles.forEach(file => console.log(' --- ', file));
+
 }
 
 

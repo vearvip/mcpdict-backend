@@ -1,7 +1,7 @@
-import { extractHanzi } from "@vearvip/hanzi-utils";
+import { extractHanzi, splitUnicodeStringIgnoreSequence } from "@vearvip/hanzi-utils";
 import { dbClient } from "../database";
-import { HanZi, YiTiZi, YuYan, ZiZu } from "../utils/constant";
-import { escapeFTSQuery } from "../utils";
+import { DuYin, HanZi, YiTiZi, YuYan, ZhuShi, ZiZu } from "../utils/constant";
+import { escapeFTSQuery } from "../utils"; 
 
 export type QueryType = "hanzi" | "duyin" | "zhushi" | "cidian";
 
@@ -30,38 +30,25 @@ export function queryCharsByType(
   queryType: QueryType,
   dialectList?: string[],
 ): any[] {
-  queryStr = escapeFTSQuery(queryStr)
-  let colStr = "*";
-  if (Array.isArray(dialectList) && dialectList.length > 0) {
-    colStr = [...dialectList, HanZi].map((ele) => `\`${ele}\``).join(", ");
-  }
-  let sqlStr = "";
+  queryStr = escapeFTSQuery(queryStr) 
+  let searchStr  = "";
+  const dialectStr = (dialectList && Array.isArray(dialectList) && dialectList.length > 0) 
+    ? `AND ${YuYan} : (${dialectList.join(" OR ")})`   
+    : "";
+
   if (queryType == "duyin") {
-    if (!dialectList || dialectList.length == 0) {
-      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${queryStr}*' LIMIT 20`;
-    } else {
-      sqlStr = `SELECT ${colStr} FROM ipa WHERE ipa MATCH '${(dialectList ?? [])
-        .map((dialectName) => {
-          return `"${dialectName}":${queryStr}*`;
-        })
-        .join(" OR ")}' LIMIT 20`; 
-    }
+    searchStr = `${DuYin} : (${queryStr}*)`;
     // console.log("sqlStr:", sqlStr);
   } else if (queryType == "zhushi") {
-    if (!dialectList || dialectList.length == 0) {
-      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${queryStr}*' LIMIT 20`;
-    } else {
-      sqlStr = `SELECT ${colStr} FROM explain WHERE explain MATCH '${(dialectList ?? [])
-        .map((dialectName) => {
-          return `"${dialectName}":${queryStr}*`;
-        })
-        .join(" OR ")}' LIMIT 20`; 
-    }
+    searchStr = `${ZhuShi} : (${splitUnicodeStringIgnoreSequence(queryStr).join(" ")}*)`;
     // console.log("sqlStr:", sqlStr);
   } else if (queryType == "cidian") { 
     // --
   }
-  // console.log('sqlStr', sqlStr)
+
+
+  let sqlStr = `SELECT * FROM langs WHERE langs MATCH '${searchStr} ${dialectStr}' LIMIT 50`; 
+  console.log(sqlStr)
   const rows = dbClient.query(sqlStr).all();
   return rows;
 }
@@ -73,7 +60,7 @@ export function queryCharInfo(char: string, infoKeyList: string[]): any[] {
     colStr = [...infoKeyList, HanZi].map((ele) => `\`${ele}\``)?.join(", ");
   }
   const sqlStr = `SELECT ${colStr}, ${HanZi} FROM mcpdict WHERE ${HanZi} MATCH '${char}'`;
-  // console.log('sqlStr', sqlStr)
+  // console.log(sqlStr)
   const rows = dbClient.query(sqlStr).all();
   return rows;
 }
