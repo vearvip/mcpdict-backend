@@ -16,8 +16,8 @@
   "dependencies": {
     "@elysiajs/cors": "^1.1.1",
     "@elysiajs/swagger": "^1.1.6",
-    "@vearvip/hanzi-utils": "1.0.8",
-    "elysia": "latest"
+    "@vearvip/hanzi-utils": "1.0.11",
+    "elysia": "1.4.17"
   },
   "devDependencies": {
     "bun-types": "latest"
