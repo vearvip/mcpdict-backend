@@ -65,8 +65,8 @@ export function queryCharInfo(char: string, infoKeyList: string[]): any[] {
   return rows;
 }
 
-// 查询多个字符的变体
-export function queryVariants(charList: string[]): string[] {
+// 查询多个字符的变体 - 失效
+export function queryVariantsOld(charList: string[]): string[] {
   const hanziCharList = extractHanzi(charList.join("")); // 提取字符串中的汉字
   const placeholders = hanziCharList.join(" OR ");
   const sqlStr = `SELECT ${HanZi}, ${YiTiZi} FROM mcpdict WHERE ${HanZi} MATCH '${placeholders}'`;
@@ -81,6 +81,26 @@ export function queryVariants(charList: string[]): string[] {
     if (typeof row[YiTiZi] === "string") {
       variants.push(...row[YiTiZi].split(" ")); // 添加变体
     }
+  });
+
+  return variants.filter(ele => !!ele);
+}
+
+// 查询多个字符的变体
+export function queryVariants(charList: string[]): string[] {
+  const hanziCharList = extractHanzi(charList.join("")); // 提取字符串中的汉字
+  
+  // 初始化变体数组
+  const variants: string[] = [];
+  
+  // 对每个字符，查询哪些字的异体字字段包含它
+  hanziCharList.forEach(char => {
+    const sqlStr = `SELECT ${HanZi} FROM mcpdict WHERE ${YiTiZi} MATCH '${char}'`;
+    const rows = dbClient.query(sqlStr).all();
+    
+    rows.forEach((row: any) => {
+      variants.push(row[HanZi]); // 添加找到的字（这些字的异体字包含原字符）
+    });
   });
 
   return variants.filter(ele => !!ele);
