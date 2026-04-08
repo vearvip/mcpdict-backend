@@ -95,6 +95,7 @@ export function queryVariants(charList: string[]): string[] {
   
   // 对每个字符，查询哪些字的异体字字段包含它
   hanziCharList.forEach(char => {
+    variants.push(char); // 添加当前字符本身
     const sqlStr = `SELECT ${HanZi} FROM mcpdict WHERE ${YiTiZi} MATCH '${char}'`;
     const rows = dbClient.query(sqlStr).all();
     
