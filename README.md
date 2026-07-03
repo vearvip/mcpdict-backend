@@ -15,8 +15,7 @@
 #### 构建数据库 
 请确保本地安装了Docker，然后再运行命令
 ```bash
-bun run createdb
-bun run updatedb
+bun run createdb 
 ``` 
 #### 安装依赖 
 ```bash
