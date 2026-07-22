@@ -45,3 +45,6 @@ sub_mcpdict.db
 package-lock.json
 pnpm-lock.yaml
 **/*.bun
+
+
+/.temp*/
