@@ -35,11 +35,8 @@ bun run build
 #### 运行docker镜像 
 ```bash
 bun run work
-```
-#### 一键构建并运行
-```bash
-bun run deploy
-```
+``` 
+
  
 ## LICENSE
 本项目使用 [MIT](./LICENSE) 开源协议
