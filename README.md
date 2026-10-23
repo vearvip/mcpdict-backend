@@ -66,6 +66,32 @@ bun run data:fetch --out /path/to/mcpdict.db
 bun run data:validate --db /path/to/mcpdict.db
 ```
 
+### 从源码构建（可选）
+
+如果要从上游 `make.py` 构建，而不是解包 APK：
+
+```bash
+# 需要 Python >= 3.12、git、网络
+bun run data:build:source
+
+# 中国网络可换镜像；镜像可能滞后，建议再配合 --patch 补最新提交
+bun run data:build:source --repo https://gitcode.com/vearvip/MCPDict.git --ref master
+
+# 先下载 GitHub compare diff，再应用
+curl -L -o /tmp/mcpdict.patch \
+  "https://github.com/osfans/MCPDict/compare/<old>...<new>.patch"
+bun run data:build:source --patch /tmp/mcpdict.patch --source-commit <github-sha>
+# 重复使用同一个 --dir 加 --clean（会删除 tools/app 的未跟踪文件）
+
+# 需要做上游的同音字检查（更慢）
+bun run data:build:source --check
+
+# 依赖已装好时跳过 pip
+bun run data:build:source --skip-install --python /path/to/python3.12
+```
+
+源码构建产物同样写入 `data/mcpdict.db`，并在 `manifest.json` 里记录 `sourceRepo`、`sourceRef`、`sourceCommit`、`dbSha256`。Python 3.12 是硬要求：上游部分 `f-string` 在 3.9/3.11 下会直接 `SyntaxError`。
+
 > `createdb` 仍然保留，等价于 `data:fetch`（旧文档里的 source build 已不再作为默认流程）。
 
 ### 数据库路径

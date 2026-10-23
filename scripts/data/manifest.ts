@@ -6,11 +6,15 @@ import type { TableCounts } from "../../src/database/open";
 
 export interface DataManifest {
   schemaVersion: number;
-  source: "apk" | "local";
+  source: "apk" | "local" | "source";
   release: string | null;
-  assetName: string;
-  assetSize: number;
-  assetSha256: string;
+  assetName?: string;
+  assetSize?: number;
+  assetSha256?: string;
+  sourceRepo?: string;
+  sourceRef?: string;
+  sourceCommit?: string;
+  sourcePatch?: string;
   dbSha256: string;
   dbSize: number;
   generatedAt: string;
