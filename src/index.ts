@@ -5,6 +5,8 @@ import { charRoutes } from "./routes/char";
 import { cors } from "@elysiajs/cors";
 import { errorFormatterPlugin, responseFormatterPlugin } from "./plugins";
 import { queryDialectInfos } from "./services/dialect";
+import { dbClient, dbMeta } from "./database";
+import { config, isProduction } from "./config";
 
 const { dialectInfos, dialectNames, dialectNamesSet, dialectInfosMap } =
   queryDialectInfos();
@@ -16,31 +18,10 @@ const app = new Elysia().state({
   dialectInfosMap,
 });
 
-function getDomain(url: string | null) {
-  try {
-    const parsedUrl = new URL(url || "");
-    return parsedUrl.origin; // 返回协议 + 域名，例如 "https://zany-eureka-9qrg9vjvqgjc95rw-3000.app.github.dev"
-  } catch (error: any) {
-    console.error("提供的字符串不是有效的URL:", error.message);
-    return null;
-  }
-}
-
 app.use(
-  cors()
-  // {
-  //   origin: (request: Request) => {
-  //     const domain = getDomain(request.headers.get('referer')) || ''
-  //     const vearVipMatchResult = /.*\.vear\.vip$/.test(domain)
-  //     const githubDevMatchResult = /.*\.github\.dev$/.test(domain)
-  //     console.log({
-  //       vearVipMatchResult,
-  //       githubDevMatchResult,
-  //       referer: request.headers.get('referer')
-  //     })
-  //     // return  vearVipMatchResult || githubDevMatchResult
-  //   }
-  // }
+  cors({
+    origin: config.corsOrigins,
+  }),
 );
 
 // 包装成功返回信息
@@ -48,11 +29,36 @@ app.use(responseFormatterPlugin);
 // 包装错误返回信息
 app.use(errorFormatterPlugin);
 
+app.get("/health", () => {
+  dbClient.query("SELECT 1 AS ok").get();
+  return {
+    status: "ok",
+    db: {
+      schemaVersion: dbMeta.schemaVersion,
+      size: dbMeta.size,
+      tables: dbMeta.tables,
+      visibleDialects: dbMeta.visibleDialects,
+      checkedAt: dbMeta.checkedAt,
+    },
+  };
+});
+
+app.get("/meta", () => ({
+  service: "mcpdict-backend",
+  version: process.env.npm_package_version ?? "unknown",
+  nodeEnv: config.nodeEnv,
+  db: dbMeta,
+}));
+
 // 注册路由
 app.use(swagger()).use(dialectRoutes).use(charRoutes);
 
-app.listen(3000);
+app.listen(config.port);
 
 console.log(
-  `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}/swagger`
+  [
+    `🦊 Elysia is running at http://${app.server?.hostname}:${app.server?.port}`,
+    `   DB: ${dbMeta.path} (${dbMeta.tables.langs.toLocaleString()} langs, ${dbMeta.visibleDialects.toLocaleString()} visible dialects)`,
+    `   Env: ${config.nodeEnv}${isProduction() ? "" : " (swagger enabled)"}`,
+  ].join("\n"),
 );

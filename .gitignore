@@ -48,3 +48,7 @@ pnpm-lock.yaml
 
 
 /.temp*/
+# Phase 1 data pipeline artifacts
+/data/
+/.cache/
+*.tmp-*

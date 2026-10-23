@@ -1,0 +1,8 @@
+.git
+.gitignore
+node_modules
+.cache
+tests
+data/manifest.json
+*.log
+*.tmp-*

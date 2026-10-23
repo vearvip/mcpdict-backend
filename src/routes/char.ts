@@ -29,9 +29,7 @@ export const charRoutes = new Elysia().group("/char", (app) =>
 
       return { data: charRows, variants };
     })
-    .post("/byType", ({ body, store }) => {
-      const { dialectNamesSet, dialectInfosMap } = store;
-
+    .post("/byType", ({ body }) => {
       const queryStr: string = (body as any).queryStr;
       let dialectList: string[] = (body as any).dialectList;
       const queryType: chatService.QueryType = (body as any).queryType;
@@ -56,15 +54,18 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       if (!query.q) throw new Error("请传入汉字！");
       if (typeof query.q !== "string") throw new Error("请传入正确的汉字！");
 
-      const charList: string[] = (query.q ?? "")
+      const charList: string[] = String(query.q)
         .split(",")
-        .filter((char) => char);
+        .filter((char: string) => char);
       const variants = chatService.queryVariants(charList);
 
       return variants;
     })
     .post("/long", ({ body }) => {
-      const { charList, dialectName } = body;
+      const { charList, dialectName } = body as {
+        charList: string[];
+        dialectName: string;
+      };
 
       if (charList.length === 0) throw new Error("请传入长文！");
       if (charList.length > 1000)
@@ -77,7 +78,10 @@ export const charRoutes = new Elysia().group("/char", (app) =>
       return { data: charRows, variants };
     })
     .post("/info", ({ body }) => {
-      const { char, infoKeyList } = body;
+      const { char, infoKeyList } = body as {
+        char: string;
+        infoKeyList: string[];
+      };
 
       if (!char) throw new Error("请传入汉字！");
       if (

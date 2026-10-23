@@ -1,3 +1,5 @@
+export {};
+
 const REGISTRY_HOST = "crpi-y6tzwvqgvhqozlnl.cn-hangzhou.personal.cr.aliyuncs.com";
 const REPO_PATH = "vear_dockerhub/mcpdict_backend";
 const FULL_REPO = `${REGISTRY_HOST}/${REPO_PATH}`;

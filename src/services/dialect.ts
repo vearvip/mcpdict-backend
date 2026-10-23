@@ -43,7 +43,7 @@ export const queryDialectInfos = () => {
 
   const dialectNamesSet = new Set(dialectNames);
   const dialectInfosMap = new Map(
-    dialectInfos.map((di) => [di[JianCheng], di])
+    dialectInfos.map((di: any) => [di[JianCheng], di])
   );
   return {
     dialectInfos,

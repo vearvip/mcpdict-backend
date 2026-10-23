@@ -13,7 +13,7 @@ export const errorFormatterPlugin = (app: Elysia) => {
 
     return {
       success: false,
-      message: error?.message ?? '未知错误'
+      message: error instanceof Error ? error.message : '未知错误'
     };
   });
 };
