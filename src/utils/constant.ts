@@ -51,3 +51,26 @@ export const Cun = '村'
 export const ZiRanCun = '自然村'
 export const JieXiRiZhi = '解析日志'
 // 👆🏼👆🏼👆🏼👆🏽👆🏽👆🏽 方言表枚举 👆🏽👆🏽👆🏽👆🏼👆🏼👆🏼
+
+// 👇🏻 汉字表字段（/char/info 白名单）👇🏻
+export const ShuoWen = "說文";
+export const JiYun = "集韻";
+export const HuiZuan = "匯纂";
+export const KangXi = "康熙";
+export const HanDa = "漢大";
+
+export const TongYiMa = "統一碼";
+export const ZiXingBianTi = "字形變體";
+export const ZiXingMiaoShu = "字形描述";
+export const BuJianJianSuo = "部件檢索";
+export const LiangFen = "兩分";
+export const ZongBiHuaShu = "總筆畫數";
+export const BuShouYuBi = "部首餘筆";
+export const WuBiHua = "五筆畫";
+export const WuBi86 = "五筆86版";
+export const WuBi98 = "五筆98版";
+export const WuBi06 = "五筆06版";
+export const CangJie3 = "倉頡三代";
+export const CangJie5 = "倉頡五代";
+export const CangeJie6 = "倉頡六代";
+export const ShanRenMaLTS = "山人碼LTS";

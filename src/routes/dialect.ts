@@ -1,4 +1,5 @@
-import { Elysia } from "elysia";
+import { Elysia, t } from "elysia";
+import { notFound } from "../errors";
 import {
   YuYan,
   JianCheng,
@@ -32,6 +33,18 @@ import {
   BuDaiDiaoYinJieShu, 
 } from "../utils/constant";
 
+function parseTone(value: unknown): Record<string, unknown> {
+  if (typeof value !== "string" || value.trim() === "") return {};
+  try {
+    const parsed = JSON.parse(value) as unknown;
+    return parsed && typeof parsed === "object"
+      ? (parsed as Record<string, unknown>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
 export const dialectRoutes = new Elysia().group("/dialect", (app) =>
   app
     .get("/", ({ store }) => {
@@ -47,7 +60,7 @@ export const dialectRoutes = new Elysia().group("/dialect", (app) =>
           [YinDianFenQv]: item[YinDianFenQv], // [6] 音典分区
           [YinDianYanSe]: item[YinDianYanSe], // [7] 音典颜色
           [YinDianPaiXv]: item[YinDianPaiXv], // [8] 音典排序
-          [ShengDiao]: JSON.parse(item[ShengDiao]), // [9] 声调
+          [ShengDiao]: parseTone(item[ShengDiao]), // [9] 声调
           [Sheng]: item[Sheng], // [10] 声
           [Shi]: item[Shi], // [11] 市
           [Xian]: item[Xian], // [12] 县
@@ -69,10 +82,22 @@ export const dialectRoutes = new Elysia().group("/dialect", (app) =>
 
       return result
     })
-    .get("/item", ({ store, query }) => {
-      // @ts-ignore
-      let result = ((store?.dialectInfos) ?? []).find((item: any) => item[JianCheng] === query.name)
-
-      return result
-    })
+    .get(
+      "/item",
+      ({ store, query }) => {
+        // @ts-ignore
+        const result = ((store?.dialectInfos) ?? []).find(
+          (item: any) => item[JianCheng] === query.name,
+        );
+        if (!result) {
+          throw notFound("未找到该方言");
+        }
+        return result;
+      },
+      {
+        query: t.Object({
+          name: t.String({ minLength: 1, maxLength: 100 }),
+        }),
+      },
+    )
 );

@@ -21,7 +21,8 @@ const SAMPLE_DIALECTS = [
 ];
 
 const SAMPLE_CHARS = ["說", "明", "漢", "字", "音", "典", "方", "言", "查", "詢"];
-const LANGS_LIMIT = 5000;
+const LANGS_PER_DIALECT = 300;
+const LANGS_BY_CHAR_LIMIT = 500;
 
 function parseArgs(argv: string[]): { db: string; out: string } {
   const get = (name: string, fallback: string): string => {
@@ -98,23 +99,52 @@ function main(): void {
     );
 
     const dialectMatch = SAMPLE_DIALECTS.map((name) => `"${name}"`).join(" OR ");
-    const charMatch = SAMPLE_CHARS.map((char) => `"${char}"`).join(" OR ");
+    const baseCharMatch = SAMPLE_CHARS.map((char) => `"${char}"`).join(" OR ");
+
+    // 先查样本字的字典行，把它们在“異體字”里列出的异体也加进样本字集合。
+    // 例如“說”在字表中实际写作“説”，只查“說”会漏掉。
+    const sampleDictRows = source
+      .query(`SELECT * FROM mcpdict WHERE mcpdict MATCH ? LIMIT 200`)
+      .all(`漢字 : (${baseCharMatch})`) as Array<Record<string, unknown>>;
+    const allChars = new Set(SAMPLE_CHARS);
+    for (const row of sampleDictRows) {
+      for (const variant of String(row["異體字"] ?? "").split(/\s+/)) {
+        if (variant) allChars.add(variant);
+      }
+    }
+    const charMatch = [...allChars]
+      .slice(0, 200)
+      .map((char) => `"${char}"`)
+      .join(" OR ");
 
     // 同时取“样本方言的一段”和“样本字的全部读音”，保证 fixture 里既能测方言树，
     // 也能对 說/明/漢 等字跑出真实结果。
-    const byDialect = source
+    const languageRows = new Map<number, Record<string, unknown>>();
+    for (const name of SAMPLE_DIALECTS) {
+      const rows = source
+        .query(`SELECT rowid AS _rowid, * FROM langs WHERE langs MATCH ? LIMIT ?`)
+        .all(`語言 : ("${name}")`, LANGS_PER_DIALECT) as Array<
+        Record<string, unknown>
+      >;
+      for (const row of rows) languageRows.set(Number(row._rowid), row);
+    }
+    const byChar = source
       .query(`SELECT rowid AS _rowid, * FROM langs WHERE langs MATCH ? LIMIT ?`)
-      .all(`語言 : (${dialectMatch})`, LANGS_LIMIT) as Array<
+      .all(`字組 : (${charMatch})`, LANGS_BY_CHAR_LIMIT) as Array<
       Record<string, unknown>
     >;
-    const byChar = source
-      .query(`SELECT rowid AS _rowid, * FROM langs WHERE langs MATCH ? LIMIT 500`)
-      .all(`字組 : (${charMatch})`) as Array<Record<string, unknown>>;
+    for (const row of byChar) languageRows.set(Number(row._rowid), row);
 
-    const languageRows = new Map<number, Record<string, unknown>>();
-    for (const row of [...byDialect, ...byChar]) {
+    // 保证每个“样本方言 × 样本字”都有读音，便于测试跨方言查询。
+    const byCharAndDialect = source
+      .query(`SELECT rowid AS _rowid, * FROM langs WHERE langs MATCH ? LIMIT 5000`)
+      .all(
+        `(字組 : (${charMatch})) AND (語言 : (${dialectMatch}))`,
+      ) as Array<Record<string, unknown>>;
+    for (const row of byCharAndDialect) {
       languageRows.set(Number(row._rowid), row);
     }
+
     const langs = [...languageRows.values()];
 
     const dictRows = source
